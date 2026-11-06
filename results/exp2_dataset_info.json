@@ -1,0 +1,22 @@
+{
+  "n_raw": 73575,
+  "n_after_dedup": 54634,
+  "n_phishing": 24726,
+  "n_legitimate": 29908,
+  "median_len": 49.0,
+  "p95_len": 134.0,
+  "share_longer_than_128": 0.05344657173188857,
+  "environment": {
+    "python": "3.13.16",
+    "os": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+    "logical_cpus": 2,
+    "ram_gb": 7.8,
+    "gpu": "none",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.1",
+    "xgboost": "3.4.1",
+    "torch": "2.14.1+cu130"
+  }
+}

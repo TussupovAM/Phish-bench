@@ -1,0 +1,55 @@
+{"n_raw": 73575, "n_after_dedup": 54634, "n_phishing": 24726, "n_legitimate": 29908, "median_len": 49.0, "p95_len": 134.0, "share_longer_than_128": 0.05344657173188857}
+lexical features: 1.6s
+seed 44 Logistic Regression  acc=0.8628 f1=0.8462 fit=0.4s
+seed 44 Decision Tree        acc=0.9032 f1=0.8930 fit=0.3s
+seed 44 Random Forest        acc=0.9333 f1=0.9261 fit=9.1s
+seed 44 AdaBoost             acc=0.8794 f1=0.8661 fit=7.3s
+seed 44 SVM (RBF)            acc=0.9155 f1=0.9059 fit=34.2s
+seed 44 KNN (k=5)            acc=0.9176 f1=0.9097 fit=0.0s
+seed 44 XGBoost              acc=0.9326 f1=0.9255 fit=1.2s
+seed 44 CNN (char) params=46433
+    epoch 1: val_loss=0.1447
+    epoch 2: val_loss=0.1130
+    epoch 3: val_loss=0.0965
+    epoch 4: val_loss=0.1147
+    epoch 5: val_loss=0.0776
+    epoch 6: val_loss=0.0749
+    epoch 7: val_loss=0.0720
+    epoch 8: val_loss=0.0793
+    epoch 9: val_loss=0.0696
+    epoch 10: val_loss=0.0699
+seed 44 CNN (char)           acc=0.9717 f1=0.9689 train=181s epochs=10
+seed 44 LSTM (char) params=28257
+    epoch 1: val_loss=0.2241
+    epoch 2: val_loss=0.3196
+    epoch 3: val_loss=0.2033
+    epoch 4: val_loss=0.1366
+    epoch 5: val_loss=0.1244
+    epoch 6: val_loss=0.1159
+    epoch 7: val_loss=0.1090
+    epoch 8: val_loss=0.1480
+    epoch 9: val_loss=0.1070
+    epoch 10: val_loss=0.0939
+seed 44 LSTM (char)          acc=0.9630 f1=0.9591 train=688s epochs=10
+seed 44 CNN+LSTM (char) params=46753
+    epoch 1: val_loss=0.1677
+    epoch 2: val_loss=0.1046
+    epoch 3: val_loss=0.0872
+    epoch 4: val_loss=0.0870
+    epoch 5: val_loss=0.0924
+    epoch 6: val_loss=0.0819
+    epoch 7: val_loss=0.0964
+    epoch 8: val_loss=0.0824
+seed 44 CNN+LSTM (char)      acc=0.9628 f1=0.9583 train=265s epochs=8
+                            accuracy_mean  precision_mean  recall_mean  f1_mean  fpr_mean  mcc_mean  roc_auc_mean  pr_auc_mean  train_s_mean
+family model                                                                                                                                
+ML     Logistic Regression         0.8582          0.8570       0.8241   0.8402    0.1137    0.7133        0.9313       0.9253        0.7843
+       Decision Tree               0.8977          0.8870       0.8870   0.8870    0.0934    0.7936        0.8975       0.8395        0.3329
+       Random Forest               0.9318          0.9266       0.9225   0.9245    0.0605    0.8624        0.9800       0.9761       11.3253
+       AdaBoost                    0.8718          0.8672       0.8464   0.8567    0.1072    0.7410        0.9482       0.9412        7.5386
+       SVM (RBF)                   0.9132          0.9117       0.8950   0.9033    0.0717    0.8248        0.9686       0.9624       32.9101
+       KNN (k=5)                   0.9167          0.9036       0.9133   0.9084    0.0806    0.8320        0.9617       0.9384        0.0453
+       XGBoost                     0.9304          0.9263       0.9194   0.9228    0.0605    0.8595        0.9805       0.9777        8.4449
+DL     CNN (char)                  0.9715          0.9710       0.9660   0.9684    0.0240    0.9426        0.9961       0.9957      482.3870
+       LSTM (char)                 0.9587          0.9567       0.9518   0.9542    0.0357    0.9166        0.9919       0.9907      651.7450
+       CNN+LSTM (char)             0.9660          0.9698       0.9548   0.9622    0.0246    0.9315        0.9947       0.9940      291.0285

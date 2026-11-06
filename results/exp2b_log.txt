@@ -1,0 +1,24 @@
+A: all rows (as in [3]) fold 0: acc=0.9611 epochs=42 t=61s
+A: all rows (as in [3]) fold 1: acc=0.9629 epochs=61 t=88s
+A: all rows (as in [3]) fold 2: acc=0.9611 epochs=46 t=65s
+A: all rows (as in [3]) fold 3: acc=0.9684 epochs=49 t=68s
+A: all rows (as in [3]) fold 4: acc=0.9629 epochs=67 t=85s
+A: all rows (as in [3]) fold 5: acc=0.9665 epochs=47 t=61s
+A: all rows (as in [3]) fold 6: acc=0.9529 epochs=41 t=54s
+A: all rows (as in [3]) fold 7: acc=0.9575 epochs=42 t=54s
+A: all rows (as in [3]) fold 8: acc=0.9593 epochs=41 t=55s
+A: all rows (as in [3]) fold 9: acc=0.9602 epochs=65 t=86s
+B: deduplicated fold 0: acc=0.9368 epochs=44 t=29s
+B: deduplicated fold 1: acc=0.9436 epochs=38 t=27s
+B: deduplicated fold 2: acc=0.9556 epochs=70 t=52s
+B: deduplicated fold 3: acc=0.9556 epochs=54 t=41s
+B: deduplicated fold 4: acc=0.9350 epochs=48 t=33s
+B: deduplicated fold 5: acc=0.9521 epochs=40 t=29s
+B: deduplicated fold 6: acc=0.9333 epochs=46 t=36s
+B: deduplicated fold 7: acc=0.9333 epochs=60 t=44s
+B: deduplicated fold 8: acc=0.9538 epochs=49 t=35s
+B: deduplicated fold 9: acc=0.9315 epochs=59 t=45s
+                                                      accuracy_mean  accuracy_std  precision_mean  precision_std  recall_mean  recall_std  f1_mean  f1_std  fpr_mean  fpr_std  mcc_mean  mcc_std  roc_auc_mean  roc_auc_std  pr_auc_mean  pr_auc_std  fit_s_mean  fit_s_std  params_mean  params_std
+protocol                model                                                                                                                                                                                                                                                                       
+A: all rows (as in [3]) 1D-CNN (features, after [7])         0.9613        0.0044          0.9635         0.0170       0.9492      0.0201   0.9560  0.0052    0.0291   0.0142    0.9220   0.0088        0.9946       0.0008       0.9940      0.0009     67.6475    13.5389      41921.0         0.0
+B: deduplicated         1D-CNN (features, after [7])         0.9431        0.0102          0.9464         0.0125       0.9434      0.0180   0.9447  0.0101    0.0572   0.0145    0.8863   0.0203        0.9890       0.0032       0.9905      0.0027     37.0561     8.1899      41921.0         0.0

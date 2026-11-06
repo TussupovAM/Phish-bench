@@ -1,0 +1,72 @@
+A: all rows (as in [3]): n=11055, phishing=0.443
+  Logistic Regression  acc=0.9272
+  Decision Tree        acc=0.9639
+  Random Forest        acc=0.9725
+  AdaBoost             acc=0.9347
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+  SVM (RBF)            acc=0.9537
+  KNN (k=5)            acc=0.9464
+  XGBoost              acc=0.9711
+B: deduplicated: n=5849, phishing=0.516
+  Logistic Regression  acc=0.9202
+  Decision Tree        acc=0.9261
+  Random Forest        acc=0.9485
+  AdaBoost             acc=0.9340
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+  SVM (RBF)            acc=0.9432
+  KNN (k=5)            acc=0.9248
+  XGBoost              acc=0.9550
+                                             accuracy_mean  precision_mean  recall_mean  f1_mean  fpr_mean  mcc_mean  roc_auc_mean  pr_auc_mean  fit_s_mean
+protocol                model                                                                                                                              
+A: all rows (as in [3]) Logistic Regression         0.9272          0.9291       0.9049   0.9167    0.0551    0.8525        0.9790       0.9767      0.0400
+                        Decision Tree               0.9639          0.9633       0.9551   0.9591    0.0291    0.9269        0.9769       0.9653      0.0211
+                        Random Forest               0.9725          0.9774       0.9602   0.9687    0.0177    0.9444        0.9961       0.9956      1.7532
+                        AdaBoost                    0.9347          0.9398       0.9110   0.9251    0.0464    0.8677        0.9861       0.9841      1.3457
+                        SVM (RBF)                   0.9537          0.9556       0.9394   0.9473    0.0349    0.9063        0.9890       0.9863      9.2007
+                        KNN (k=5)                   0.9464          0.9441       0.9347   0.9392    0.0442    0.8916        0.9846       0.9773      0.0169
+                        XGBoost                     0.9711          0.9740       0.9604   0.9671    0.0205    0.9414        0.9967       0.9963      0.8253
+B: deduplicated         Logistic Regression         0.9202          0.9289       0.9155   0.9221    0.0749    0.8404        0.9760       0.9789      0.1073
+                        Decision Tree               0.9261          0.9225       0.9357   0.9289    0.0841    0.8524        0.9323       0.9074      0.0135
+                        Random Forest               0.9485          0.9558       0.9440   0.9498    0.0466    0.8971        0.9891       0.9904      1.2446
+                        AdaBoost                    0.9340          0.9470       0.9238   0.9352    0.0551    0.8684        0.9852       0.9870      1.0372
+                        SVM (RBF)                   0.9432          0.9505       0.9390   0.9447    0.0523    0.8866        0.9845       0.9852      3.3636
+                        KNN (k=5)                   0.9248          0.9190       0.9371   0.9279    0.0883    0.8496        0.9771       0.9720      0.0055
+                        XGBoost                     0.9550          0.9575       0.9553   0.9564    0.0452    0.9100        0.9936       0.9944      0.3135

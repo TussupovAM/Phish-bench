@@ -1,0 +1,53 @@
+{"n_raw": 73575, "n_after_dedup": 54634, "n_phishing": 24726, "n_legitimate": 29908, "median_len": 49.0, "p95_len": 134.0, "share_longer_than_128": 0.05344657173188857}
+lexical features: 1.5s
+seed 43 Logistic Regression  acc=0.8539 f1=0.8349 fit=0.4s
+seed 43 Decision Tree        acc=0.8944 f1=0.8828 fit=0.3s
+seed 43 Random Forest        acc=0.9320 f1=0.9245 fit=8.1s
+seed 43 AdaBoost             acc=0.8709 f1=0.8555 fit=6.5s
+seed 43 SVM (RBF)            acc=0.9121 f1=0.9017 fit=29.8s
+seed 43 KNN (k=5)            acc=0.9173 f1=0.9089 fit=0.0s
+seed 43 XGBoost              acc=0.9310 f1=0.9231 fit=0.9s
+seed 43 CNN (char) params=46433
+    epoch 1: val_loss=0.1453
+    epoch 2: val_loss=0.1061
+    epoch 3: val_loss=0.0926
+    epoch 4: val_loss=0.0830
+    epoch 5: val_loss=0.0870
+    epoch 6: val_loss=0.0731
+    epoch 7: val_loss=0.0745
+    epoch 8: val_loss=0.0769
+seed 43 CNN (char)           acc=0.9722 f1=0.9689 train=171s epochs=8
+seed 43 LSTM (char) params=28257
+    epoch 1: val_loss=0.2109
+    epoch 2: val_loss=0.2042
+    epoch 3: val_loss=0.1510
+    epoch 4: val_loss=0.1433
+    epoch 5: val_loss=0.1392
+    epoch 6: val_loss=0.1146
+    epoch 7: val_loss=0.1441
+    epoch 8: val_loss=0.1206
+seed 43 LSTM (char)          acc=0.9574 f1=0.9524 train=565s epochs=8
+seed 43 CNN+LSTM (char) params=46753
+    epoch 1: val_loss=0.1448
+    epoch 2: val_loss=0.1385
+    epoch 3: val_loss=0.0988
+    epoch 4: val_loss=0.0946
+    epoch 5: val_loss=0.0877
+    epoch 6: val_loss=0.0888
+    epoch 7: val_loss=0.0835
+    epoch 8: val_loss=0.0815
+    epoch 9: val_loss=0.0810
+    epoch 10: val_loss=0.0859
+seed 43 CNN+LSTM (char)      acc=0.9668 f1=0.9631 train=328s epochs=10
+                            accuracy_mean  precision_mean  recall_mean  f1_mean  fpr_mean  mcc_mean  roc_auc_mean  pr_auc_mean  train_s_mean
+family model                                                                                                                                
+ML     Logistic Regression         0.8559          0.8562       0.8191   0.8372    0.1138    0.7086        0.9303       0.9244        0.9963
+       Decision Tree               0.8950          0.8840       0.8840   0.8840    0.0960    0.7881        0.8949       0.8359        0.3462
+       Random Forest               0.9311          0.9258       0.9216   0.9237    0.0611    0.8609        0.9795       0.9759       12.4416
+       AdaBoost                    0.8681          0.8656       0.8387   0.8519    0.1077    0.7333        0.9469       0.9403        7.6528
+       SVM (RBF)                   0.9121          0.9110       0.8930   0.9019    0.0721    0.8224        0.9680       0.9621       32.2407
+       KNN (k=5)                   0.9162          0.9040       0.9115   0.9078    0.0800    0.8310        0.9607       0.9369        0.0567
+       XGBoost                     0.9293          0.9264       0.9167   0.9215    0.0603    0.8572        0.9804       0.9778       12.0808
+DL     CNN (char)                  0.9714          0.9747       0.9618   0.9682    0.0206    0.9423        0.9960       0.9956      633.0786
+       LSTM (char)                 0.9565          0.9550       0.9487   0.9518    0.0371    0.9123        0.9916       0.9904      633.4567
+       CNN+LSTM (char)             0.9676          0.9683       0.9600   0.9641    0.0260    0.9347        0.9950       0.9945      304.2392

@@ -1,0 +1,10 @@
+Logistic Regression  median=0.461ms p95=0.941ms size=0.002MB mem+=8.0MB
+Decision Tree        median=0.165ms p95=0.445ms size=0.609MB mem+=8.9MB
+Random Forest        median=23.599ms p95=36.680ms size=191.907MB mem+=391.2MB
+AdaBoost             median=31.153ms p95=51.315ms size=0.123MB mem+=8.9MB
+SVM (RBF)            median=1.393ms p95=2.226ms size=1.918MB mem+=8.9MB
+KNN (k=5)            median=4.263ms p95=6.614ms size=3.670MB mem+=10.2MB
+XGBoost              median=0.478ms p95=0.714ms size=0.921MB mem+=14.5MB
+CNN (char)           median=0.502ms p95=0.825ms size=0.181MB mem+=154.5MB
+LSTM (char)          median=0.797ms p95=1.658ms size=0.111MB mem+=140.7MB
+CNN+LSTM (char)      median=0.972ms p95=1.682ms size=0.182MB mem+=124.6MB
