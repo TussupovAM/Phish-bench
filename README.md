@@ -45,8 +45,7 @@ definitions in `src/models_ml.py` and `src/models_dl.py`. The positive class is 
 
 ## Environment used for the reported results
 
-Intel Xeon @ 2.80 GHz (2 logical CPUs), 7.8 GB RAM, no GPU, Linux 6.18, Python 3.13.16,
-NumPy 2.5.3, pandas 3.0.5, scikit-learn 1.9.1, XGBoost 3.4.1, PyTorch 2.14.1 (CPU execution).
+Python 3.13.16, NumPy 2.5.3, pandas 3.0.5, scikit-learn 1.9.1, XGBoost 3.4.1, PyTorch 2.14.1 (CPU execution).
 Also recorded in `results/exp2_dataset_info.json`.
 
 Seed 42 of experiment 2 shared the CPU with experiment 2b, so its wall-clock training times are
