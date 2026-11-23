@@ -2,3 +2,23 @@
 [best, reused] CSDMC CNN: {'filters': 64, 'dropout': 0.5}
 [best, reused] CSDMC LSTM: {'hidden': 128, 'bidirectional': True}
 [final] CSDMC seed42 ANN F1=0.9811 AUC=0.9984
+[final] CSDMC seed42 CNN F1=0.9634 AUC=0.9974
+[final] CSDMC seed42 LSTM F1=0.9520 AUC=0.9932
+[final] CSDMC seed43 ANN F1=0.9751 AUC=0.9992
+[final] CSDMC seed43 CNN F1=0.9634 AUC=0.9963
+[final] CSDMC seed43 LSTM F1=0.9466 AUC=0.9932
+[final] CSDMC seed44 ANN F1=0.9676 AUC=0.9977
+[final] CSDMC seed44 CNN F1=0.9638 AUC=0.9976
+[final] CSDMC seed44 LSTM F1=0.9520 AUC=0.9942
+                             accuracy_mean  precision_mean  recall_mean  f1_mean  fpr_mean  mcc_mean  roc_auc_mean  pr_auc_mean  train_s_mean
+dataset model                                                                                                                                
+SA      Naive Bayes                 0.9735          0.9691       0.9438   0.9562    0.0134    0.9375        0.9972       0.9937        0.0079
+        Logistic Regression         0.9789          0.9741       0.9567   0.9651    0.0114    0.9503        0.9984       0.9961        0.1109
+        ANN                         0.9837          0.9762       0.9705   0.9732    0.0105    0.9616        0.9984       0.9964        4.3888
+        CNN                         0.9764          0.9558       0.9678   0.9616    0.0199    0.9447        0.9968       0.9926      115.0395
+        LSTM                        0.9735          0.9555       0.9586   0.9568    0.0199    0.9380        0.9960       0.9905      557.2553
+CSDMC   Naive Bayes                 0.9690          0.9533       0.9508   0.9519    0.0223    0.9291        0.9960       0.9913        0.0057
+        Logistic Regression         0.9812          0.9795       0.9621   0.9707    0.0097    0.9570        0.9983       0.9964        0.0694
+        ANN                         0.9837          0.9796       0.9697   0.9746    0.0097    0.9626        0.9984       0.9963        3.2733
+        CNN                         0.9767          0.9767       0.9508   0.9635    0.0109    0.9466        0.9971       0.9931       53.6312
+        LSTM                        0.9681          0.9613       0.9394   0.9502    0.0181    0.9269        0.9935       0.9866      550.6708

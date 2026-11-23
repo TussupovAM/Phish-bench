@@ -1,0 +1,15 @@
+SA SA test (in-corpus) 1184 {'Naive Bayes': 0.948, 'Logistic Regression': 0.95, 'ANN': 0.961, 'CNN': 0.97, 'LSTM': 0.961, 'One-Class SVM (meta)': 0.74, 'DBSCAN (meta)': 0.82}
+SA CSDMC (unseen texts) 2028 {'Naive Bayes': 0.626, 'Logistic Regression': 0.554, 'ANN': 0.636, 'CNN': 0.674, 'LSTM': 0.701, 'One-Class SVM (meta)': 0.709, 'DBSCAN (meta)': 0.799}
+SA Phishing Pot 2022-26 1868 {'Naive Bayes': 0.711, 'Logistic Regression': 0.796, 'ANN': 0.877, 'CNN': 0.921, 'LSTM': 0.922, 'One-Class SVM (meta)': 0.885, 'DBSCAN (meta)': 0.933}
+CSDMC CSDMC test (in-corpus) 816 {'Naive Bayes': 0.966, 'Logistic Regression': 0.977, 'ANN': 0.981, 'CNN': 0.947, 'LSTM': 0.939, 'One-Class SVM (meta)': 0.739, 'DBSCAN (meta)': 0.761}
+CSDMC SA (unseen texts) 3864 {'Naive Bayes': 0.959, 'Logistic Regression': 0.958, 'ANN': 0.97, 'CNN': 0.937, 'LSTM': 0.923, 'One-Class SVM (meta)': 0.782, 'DBSCAN (meta)': 0.797}
+CSDMC Phishing Pot 2022-26 1868 {'Naive Bayes': 0.721, 'Logistic Regression': 0.825, 'ANN': 0.842, 'CNN': 0.927, 'LSTM': 0.926, 'One-Class SVM (meta)': 0.915, 'DBSCAN (meta)': 0.924}
+variant               good-words  obf-10  obf-30  original
+model                                                     
+ANN                        0.884   0.961   0.961     0.961
+CNN                        0.898   0.961   0.948     0.970
+DBSCAN (meta)              0.820   0.820   0.820     0.820
+LSTM                       0.881   0.959   0.967     0.961
+Logistic Regression        0.843   0.948   0.945     0.950
+Naive Bayes                0.898   0.945   0.948     0.948
+One-Class SVM (meta)       0.740   0.740   0.740     0.740
