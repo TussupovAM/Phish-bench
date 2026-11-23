@@ -1,13 +1,13 @@
 seed,score,subset,n,roc_auc,spam_share
-42,NMF community spam share,all test,1589,0.9447948870929833,
-42,NMF community spam share,cold-start senders,265,0.9103038815117466,0.6641509433962264
-42,Sender-domain spam share,all test,1589,0.9259532461897272,
+42,NMF community spam share,all test,1589,0.8406157907107085,
+42,NMF community spam share,cold-start senders,265,0.722644279877426,0.6641509433962264
+42,Sender-domain spam share,all test,1589,0.9003245285747862,
 42,Sender-domain spam share,cold-start senders,265,0.5,0.6641509433962264
-43,NMF community spam share,all test,1589,0.9339290557032054,
-43,NMF community spam share,cold-start senders,246,0.9367361111111111,0.6097560975609756
-43,Sender-domain spam share,all test,1589,0.9352940644718049,
+43,NMF community spam share,all test,1589,0.8436748567192783,
+43,NMF community spam share,cold-start senders,246,0.7826041666666667,0.6097560975609756
+43,Sender-domain spam share,all test,1589,0.9113169170689376,
 43,Sender-domain spam share,cold-start senders,246,0.5,0.6097560975609756
-44,NMF community spam share,all test,1589,0.9525447017772233,
-44,NMF community spam share,cold-start senders,264,0.9257139053451375,0.6856060606060606
-44,Sender-domain spam share,all test,1589,0.9408869845057946,
-44,Sender-domain spam share,cold-start senders,264,0.5,0.6856060606060606
+44,NMF community spam share,all test,1589,0.8571441485418814,
+44,NMF community spam share,cold-start senders,263,0.8209170013386881,0.6844106463878327
+44,Sender-domain spam share,all test,1589,0.9165545732313646,
+44,Sender-domain spam share,cold-start senders,263,0.5,0.6844106463878327

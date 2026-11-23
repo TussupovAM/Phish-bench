@@ -7,13 +7,22 @@ Graph "sender -> route -> recipient" (undirected, weighted by message count):
   S:<registered domain of From>  --  N:<origin network /24>  --  R:<registered domain of each To/Cc>
 The origin network is the /24 of the first public IP in the Received chain (oldest hop),
 i.e. where the message entered the Internet. If it is unknown, S is linked to R directly.
+Domains that the corpus authors used to anonymise addresses (taint.org, netnoteinc.com,
+slashnull.org in SA; csmining.org / csming.org in CSDMC; localhost) are not real parties
+and would become artificial hubs, so they are dropped from the graph.
 
-NMF communities: symmetric NMF on log(1+weights) adjacency; each node joins the component
-with the largest loading. The rank k in {10, 20, 40, 80} is chosen by weighted modularity
+NMF communities: symmetric NMF (SymNMF, Kuang, Ding & Park 2012), A ~ H H^T with H >= 0,
+on the log(1+weights) adjacency of the largest connected component, fitted by the damped multiplicative update
+H <- H * (1 - b + b * (A H) / (H H^T H)), b = 0.5, 300 iterations, initialised from
+sklearn NMF (nndsvda). Each node joins the component with the largest loading in H.
+Every other connected component is a community of its own. The rank k is chosen by the
+modularity of this full partition.
+(Plain NMF, A ~ W H, groups nodes with similar neighbours -- e.g. all senders -- rather
+than densely connected groups, so its partitions have negative modularity here.) The rank k in {5, 10, 20, 40, 80} is chosen by weighted modularity
 (labels are not used). A message belongs to its sender node's community.
 
 Evaluation of the structure (labels used only here):
-  * community spam share and "suspicious subgraphs": communities with >= 20 messages and
+  * community spam share and "suspicious subgraphs": communities with >= 5 messages and
     >= 90% spam;
   * predictive check: for stratified 80/20 splits (seeds 42-44) the spam share of each
     community is estimated on training messages only (Laplace-smoothed) and used as a score
@@ -39,6 +48,16 @@ import pandas as pd
 import scipy.sparse as sp
 import statsmodels.api as sm
 from sklearn.decomposition import NMF
+
+
+def symnmf(A, k, iters=300, beta=0.5, seed=42):
+    H = NMF(n_components=k, init="nndsvda", random_state=seed, max_iter=200).fit_transform(A)
+    H = H / max(np.sqrt((H.T @ H).sum()), 1e-12) * np.sqrt(A.sum() if hasattr(A, "sum") else 1)
+    for _ in range(iters):
+        AH = A @ H
+        HHH = H @ (H.T @ H)
+        H = H * (1 - beta + beta * AH / np.maximum(HHH, 1e-12))
+    return H
 from sklearn.metrics import roc_auc_score
 
 from features import RESULTS, SEEDS, load, split
@@ -53,13 +72,23 @@ def net24(ip):
     return str(ipaddress.ip_network(ip + "/24", strict=False)) if ip else ""
 
 
-df["S"] = "S:" + df.from_domain.map(reg_domain).replace("", "unknown")
+ANON = {"taint.org", "netnoteinc.com", "slashnull.org", "csmining.org", "csming.org", "localhost", ""}
+
+
+def node(prefix, dom):
+    d = reg_domain(dom)
+    return "" if d in ANON or "." not in d else f"{prefix}:{d}"
+
+
+df["S"] = df.from_domain.map(lambda x: node("S", x))
 df["N"] = df.origin_ip.map(net24).map(lambda x: "N:" + x if x else "")
-df["R"] = df.rcpt_domains.map(lambda ds: sorted({"R:" + reg_domain(d) for d in ds if d}))
+df["R"] = df.rcpt_domains.map(lambda ds: sorted({node("R", d) for d in ds} - {""}))
 
 edges = {}
 for s, n, rs in zip(df.S, df.N, df.R):
-    route = [s] + ([n] if n else [])
+    route = [x for x in (s, n) if x]
+    if not route:
+        continue
     for a, b in zip(route[:-1], route[1:]):
         edges[(a, b)] = edges.get((a, b), 0) + 1
     for r in rs:
@@ -81,34 +110,45 @@ stats = {"messages": int(len(df)), "spam": int(y.sum()), "nodes": G.number_of_no
          "largest_component_nodes": len(max(nx.connected_components(G), key=len))}
 
 # ---- NMF communities ------------------------------------------------------------------
+comps = sorted(nx.connected_components(G), key=len, reverse=True)
+gc = sorted(comps[0])
+gi = [ix[n] for n in gc]
+A_gc = A[gi][:, gi]
+small = {n: len(comps) + j for j, comp in enumerate(comps[1:]) for n in comp}  # one id per small component
 best = None
-for k in [10, 20, 40, 80]:
-    W = NMF(n_components=k, init="nndsvda", random_state=42, max_iter=500).fit_transform(A)
-    lab = np.where(W.max(1) > 0, W.argmax(1), -1)
+for k in [5, 10, 20, 40, 80]:
+    W = symnmf(A_gc, k)
+    lab_gc = W.argmax(1)
+    lab = np.full(len(nodes), -1)
+    lab[gi] = lab_gc
+    for n, cid in small.items():
+        lab[ix[n]] = cid
     parts = [set(np.array(nodes)[lab == c]) for c in np.unique(lab)]
     q = nx.community.modularity(G, parts, weight="weight")
-    print(f"NMF k={k}: modularity={q:.4f}", flush=True)
+    print(f"SymNMF k={k} on the largest component: modularity of full partition={q:.4f}", flush=True)
     stats.setdefault("nmf_modularity", {})[k] = q
     if best is None or q > best[0]:
         best = (q, k, lab)
 q, k, lab = best
-stats.update(nmf_k=k, nmf_modularity_best=q)
+stats.update(nmf_k=k, nmf_modularity_best=q, small_components=len(comps) - 1)
 comm_of = {n: int(lab[ix[n]]) for n in nodes}
-df["community"] = df.S.map(lambda s: comm_of.get(s, -1))
+# a message belongs to its sender's community, or to its origin network's if the sender is anonymised
+df["community"] = [comm_of.get(s, comm_of.get(n, -1)) for s, n in zip(df.S, df.N)]
 
 c = df.groupby("community").agg(messages=("label", "size"), spam=("label", "sum"),
-                                 senders=("S", "nunique"), origin_nets=("N", lambda s: s[s != ""].nunique()))
+                                 senders=("S", lambda s: s[s != ""].nunique()),
+                                 origin_nets=("N", lambda s: s[s != ""].nunique()))
 c["nodes"] = pd.Series(lab).value_counts().reindex(c.index).fillna(0).astype(int)
 c["spam_share"] = c.spam / c.messages
-c["suspicious"] = (c.messages >= 20) & (c.spam_share >= 0.9)
-c["legit_dominated"] = (c.messages >= 20) & (c.spam_share <= 0.1)
+c["suspicious"] = (c.messages >= 5) & (c.spam_share >= 0.9)
+c["legit_dominated"] = (c.messages >= 5) & (c.spam_share <= 0.1)
 c.sort_values("messages", ascending=False).to_csv(RESULTS / "e3_communities.csv")
 stats["suspicious_subgraphs"] = int(c.suspicious.sum())
 stats["suspicious_messages"] = int(c[c.suspicious].messages.sum())
 stats["suspicious_spam_captured_share"] = float(c[c.suspicious].spam.sum() / y.sum())
 stats["suspicious_ham_in_them"] = int((c[c.suspicious].messages - c[c.suspicious].spam).sum())
 stats["legit_dominated_subgraphs"] = int(c.legit_dominated.sum())
-stats["mixed_communities_ge20"] = int(((c.messages >= 20) & ~c.suspicious & ~c.legit_dominated).sum())
+stats["mixed_communities_ge5"] = int(((c.messages >= 5) & ~c.suspicious & ~c.legit_dominated).sum())
 
 # ---- predictive check ------------------------------------------------------------------
 rows = []
@@ -120,8 +160,8 @@ for seed in SEEDS:
     dom_rate = ((trd.groupby("S").label.sum() + prior) / (trd.groupby("S").size() + 1))
     ted = df.iloc[te]
     s_comm = ted.community.map(comm_rate).fillna(prior).to_numpy()
-    s_dom = ted.S.map(dom_rate).fillna(prior).to_numpy()
-    cold = ~ted.S.isin(set(trd.S)).to_numpy()
+    s_dom = np.where(ted.S == "", prior, ted.S.map(dom_rate).fillna(prior).to_numpy())
+    cold = (~ted.S.isin(set(trd.S)) & (ted.S != "")).to_numpy()
     for name, s in [("NMF community spam share", s_comm), ("Sender-domain spam share", s_dom)]:
         rows.append(dict(seed=seed, score=name, subset="all test", n=len(te),
                          roc_auc=roc_auc_score(y[te], s)))
@@ -135,17 +175,18 @@ pred.groupby(["score", "subset"]).agg(roc_auc_mean=("roc_auc", "mean"), roc_auc_
 print(pd.read_csv(RESULTS / "e3_predictive.csv").round(4).to_string(), flush=True)
 
 # ---- ERGM by MPLE on the sender projection ------------------------------------------
-senders = sorted(df.loc[df.N != "", "S"].unique())
+df_s = df[(df.N != "") & (df.S != "")]
+senders = sorted(df_s.S.unique())
 si = {s: i for i, s in enumerate(senders)}
-nets = sorted(df.loc[df.N != "", "N"].unique())
+nets = sorted(df_s.N.unique())
 ni = {n: i for i, n in enumerate(nets)}
-sub = df[df.N != ""].drop_duplicates(["S", "N"])
+sub = df_s.drop_duplicates(["S", "N"])
 B = sp.csr_matrix((np.ones(len(sub)), (sub.S.map(si), sub.N.map(ni))), shape=(len(senders), len(nets)))
 P = (B @ B.T).tocsr()
 P.setdiag(0); P.eliminate_zeros()
 P.data[:] = 1
 n = len(senders)
-spam_node = df[df.N != ""].groupby("S").label.mean().reindex(senders).to_numpy() >= 0.5
+spam_node = df_s.groupby("S").label.mean().reindex(senders).to_numpy() >= 0.5
 CN = (P @ P).tocsr()  # common neighbours = change statistic of the triangle count
 rng = np.random.default_rng(42)
 iu, ju = sp.triu(P, k=1).nonzero()

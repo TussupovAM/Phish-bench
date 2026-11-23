@@ -1,5 +1,5 @@
 score,subset,roc_auc_mean,roc_auc_std,n
-NMF community spam share,all test,0.943756214857804,0.00935118707423684,1589.0
-NMF community spam share,cold-start senders,0.9242512993226651,0.013276675136535852,258.3333333333333
-Sender-domain spam share,all test,0.9340447650557756,0.0075448457105736924,1589.0
-Sender-domain spam share,cold-start senders,0.5,0.0,258.3333333333333
+NMF community spam share,all test,0.8471449319906227,0.008793618137059445,1589.0
+NMF community spam share,cold-start senders,0.7753884826275935,0.0495321261199688,258.0
+Sender-domain spam share,all test,0.9093986729583627,0.008283316530197832,1589.0
+Sender-domain spam share,cold-start senders,0.5,0.0,258.0

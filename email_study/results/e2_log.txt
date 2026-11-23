@@ -5,3 +5,6 @@
 [best] SA ANN: {'hidden': 64, 'dropout': 0.2}
 [tune] SA CNN {'filters': 64, 'dropout': 0.3} valF1=0.9676 loss=0.0522 ep=15 t=81s
 [tune] SA CNN {'filters': 64, 'dropout': 0.5} valF1=0.9652 loss=0.0511 ep=15 t=117s
+[tune] SA CNN {'filters': 128, 'dropout': 0.3} valF1=0.9679 loss=0.0540 ep=10 t=163s
+[tune] SA CNN {'filters': 128, 'dropout': 0.5} valF1=0.9677 loss=0.0486 ep=13 t=132s
+[best] SA CNN: {'filters': 128, 'dropout': 0.3}
