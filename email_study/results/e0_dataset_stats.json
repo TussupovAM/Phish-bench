@@ -1,0 +1,30 @@
+{
+  "raw_counts":{
+    "CSDMC":4327,
+    "PP":2000,
+    "SA":6046
+  },
+  "parse_errors":{
+    "CSDMC":0,
+    "PP":0,
+    "SA":0
+  },
+  "dups_within":{
+    "CSDMC":247,
+    "PP":132,
+    "SA":130
+  },
+  "csdmc_also_in_sa":2052,
+  "after_dedup":{
+    "0":{
+      "CSDMC":2761.0,
+      "PP":null,
+      "SA":4108.0
+    },
+    "1":{
+      "CSDMC":1319.0,
+      "PP":1868.0,
+      "SA":1808.0
+    }
+  }
+}

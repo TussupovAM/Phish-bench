@@ -1,0 +1,5 @@
+email_study/data/
+email_study/_ext/
+email_study/results/emails.pkl
+email_study/results/e2_models/
+__pycache__/

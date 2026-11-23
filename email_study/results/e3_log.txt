@@ -1,0 +1,55 @@
+NMF k=10: modularity=-0.1103
+NMF k=20: modularity=-0.0366
+NMF k=40: modularity=-0.0212
+NMF k=80: modularity=-0.0130
+                      score              subset  roc_auc_mean  roc_auc_std          n
+0  NMF community spam share            all test        0.9438       0.0094  1589.0000
+1  NMF community spam share  cold-start senders        0.9243       0.0133   258.3333
+2  Sender-domain spam share            all test        0.9340       0.0075  1589.0000
+3  Sender-domain spam share  cold-start senders        0.5000       0.0000   258.3333
+{
+ "messages": 7944,
+ "spam": 2575,
+ "nodes": 7237,
+ "edges": 11465,
+ "node_types": {
+  "S": 1803,
+  "N": 3289,
+  "R": 2145
+ },
+ "messages_with_origin_ip": 0.9018126888217523,
+ "connected_components": 174,
+ "largest_component_nodes": 6745,
+ "nmf_modularity": {
+  "10": -0.11031638882078558,
+  "20": -0.036620101352529535,
+  "40": -0.021161289065027226,
+  "80": -0.012979841081305293
+ },
+ "nmf_k": 80,
+ "nmf_modularity_best": -0.012979841081305293,
+ "suspicious_subgraphs": 8,
+ "suspicious_messages": 1086,
+ "suspicious_spam_captured_share": 0.4112621359223301,
+ "suspicious_ham_in_them": 27,
+ "legit_dominated_subgraphs": 17,
+ "mixed_communities_ge20": 11,
+ "ergm": {
+  "senders": 1792,
+  "spam_senders": 998,
+  "edges": 676,
+  "density": 0.0004212530908510808,
+  "sampled_non_edges": 8838,
+  "nonedge_sampling_rate": 0.005509768961260801,
+  "edge_types": {
+   "spam-spam": 223,
+   "ham-ham": 379,
+   "mixed": 74
+  }
+ }
+}
+                    coef  se_mple        z  odds_ratio
+edges           -10.6706   0.2329 -23.4874      0.0000
+nodefactor.spam   0.0612   0.0864   0.7087      1.0632
+nodematch.spam    1.9409   0.2307   8.4120      6.9651
+triangle          5.5928   0.3011  18.5774    268.4823

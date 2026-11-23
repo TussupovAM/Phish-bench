@@ -1,0 +1,49 @@
+SA seed42 meta      Isolation Forest AUC=0.867 P=0.749 R=0.470 F1=0.577 FPR=0.069
+SA seed42 meta      One-Class SVM    AUC=0.856 P=0.856 R=0.740 F1=0.794 FPR=0.055
+SA seed42 meta      DBSCAN           AUC=0.961 P=0.874 R=0.820 F1=0.846 FPR=0.052
+SA seed42 meta+text Isolation Forest AUC=0.627 P=0.314 R=0.044 F1=0.077 FPR=0.043
+SA seed42 meta+text One-Class SVM    AUC=0.701 P=0.769 R=0.331 F1=0.463 FPR=0.044
+SA seed42 meta+text DBSCAN           AUC=0.945 P=0.897 R=0.652 F1=0.755 FPR=0.033
+SA seed43 meta      Isolation Forest AUC=0.856 P=0.728 R=0.370 F1=0.491 FPR=0.061
+SA seed43 meta      One-Class SVM    AUC=0.852 P=0.837 R=0.710 F1=0.768 FPR=0.061
+SA seed43 meta      DBSCAN           AUC=0.956 P=0.869 R=0.790 F1=0.828 FPR=0.052
+SA seed43 meta+text Isolation Forest AUC=0.627 P=0.224 R=0.030 F1=0.054 FPR=0.046
+SA seed43 meta+text One-Class SVM    AUC=0.703 P=0.702 R=0.345 F1=0.463 FPR=0.064
+SA seed43 meta+text DBSCAN           AUC=0.928 P=0.820 R=0.704 F1=0.758 FPR=0.068
+SA seed44 meta      Isolation Forest AUC=0.888 P=0.863 R=0.384 F1=0.532 FPR=0.027
+SA seed44 meta      One-Class SVM    AUC=0.875 P=0.873 R=0.743 F1=0.803 FPR=0.047
+SA seed44 meta      DBSCAN           AUC=0.959 P=0.870 R=0.815 F1=0.842 FPR=0.054
+SA seed44 meta+text Isolation Forest AUC=0.609 P=0.298 R=0.039 F1=0.068 FPR=0.040
+SA seed44 meta+text One-Class SVM    AUC=0.734 P=0.784 R=0.351 F1=0.485 FPR=0.043
+SA seed44 meta+text DBSCAN           AUC=0.943 P=0.869 R=0.677 F1=0.761 FPR=0.045
+CSDMC seed42 meta      Isolation Forest AUC=0.880 P=0.797 R=0.432 F1=0.560 FPR=0.053
+CSDMC seed42 meta      One-Class SVM    AUC=0.881 P=0.848 R=0.739 F1=0.789 FPR=0.063
+CSDMC seed42 meta      DBSCAN           AUC=0.961 P=0.893 R=0.761 F1=0.822 FPR=0.043
+CSDMC seed42 meta+text Isolation Forest AUC=0.656 P=0.327 R=0.064 F1=0.108 FPR=0.063
+CSDMC seed42 meta+text One-Class SVM    AUC=0.691 P=0.709 R=0.277 F1=0.398 FPR=0.054
+CSDMC seed42 meta+text DBSCAN           AUC=0.917 P=0.810 R=0.629 F1=0.708 FPR=0.071
+CSDMC seed43 meta      Isolation Forest AUC=0.901 P=0.799 R=0.527 F1=0.635 FPR=0.063
+CSDMC seed43 meta      One-Class SVM    AUC=0.897 P=0.845 R=0.746 F1=0.793 FPR=0.065
+CSDMC seed43 meta      DBSCAN           AUC=0.960 P=0.883 R=0.773 F1=0.824 FPR=0.049
+CSDMC seed43 meta+text Isolation Forest AUC=0.694 P=0.225 R=0.034 F1=0.059 FPR=0.056
+CSDMC seed43 meta+text One-Class SVM    AUC=0.711 P=0.736 R=0.242 F1=0.365 FPR=0.042
+CSDMC seed43 meta+text DBSCAN           AUC=0.930 P=0.878 R=0.598 F1=0.712 FPR=0.040
+CSDMC seed44 meta      Isolation Forest AUC=0.893 P=0.780 R=0.485 F1=0.598 FPR=0.065
+CSDMC seed44 meta      One-Class SVM    AUC=0.889 P=0.904 R=0.746 F1=0.817 FPR=0.038
+CSDMC seed44 meta      DBSCAN           AUC=0.963 P=0.890 R=0.769 F1=0.825 FPR=0.045
+CSDMC seed44 meta+text Isolation Forest AUC=0.672 P=0.288 R=0.057 F1=0.095 FPR=0.067
+CSDMC seed44 meta+text One-Class SVM    AUC=0.722 P=0.765 R=0.284 F1=0.414 FPR=0.042
+CSDMC seed44 meta+text DBSCAN           AUC=0.939 P=0.941 R=0.663 F1=0.778 FPR=0.020
+   dataset   features             model  roc_auc_mean  precision_mean  recall_mean  f1_mean  fpr_mean
+0       SA       meta  Isolation Forest         0.870           0.780        0.408    0.533     0.052
+1       SA       meta     One-Class SVM         0.861           0.856        0.731    0.788     0.054
+2       SA       meta            DBSCAN         0.959           0.871        0.808    0.839     0.053
+3       SA  meta+text  Isolation Forest         0.621           0.279        0.038    0.066     0.043
+4       SA  meta+text     One-Class SVM         0.713           0.752        0.343    0.470     0.050
+5       SA  meta+text            DBSCAN         0.939           0.862        0.678    0.758     0.049
+6    CSDMC       meta  Isolation Forest         0.891           0.792        0.481    0.598     0.060
+7    CSDMC       meta     One-Class SVM         0.889           0.866        0.744    0.800     0.056
+8    CSDMC       meta            DBSCAN         0.961           0.889        0.768    0.824     0.046
+9    CSDMC  meta+text  Isolation Forest         0.674           0.280        0.052    0.087     0.062
+10   CSDMC  meta+text     One-Class SVM         0.708           0.737        0.268    0.392     0.046
+11   CSDMC  meta+text            DBSCAN         0.928           0.876        0.630    0.732     0.043

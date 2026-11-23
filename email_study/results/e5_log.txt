@@ -1,0 +1,32 @@
+                           CSDMC       SA  well_founded  pp_same_direction
+indicator                                                                 
+anchor_mismatch           12.774    7.709          True               True
+body_upper_ratio           0.466    0.741         False               True
+from_replyto_mismatch      4.247    0.659         False               True
+from_returnpath_mismatch   0.004    0.104          True               True
+has_attachment             0.066    0.382          True              False
+html_only                 71.003   26.239          True               True
+ip_url                    51.969  113.390          True               True
+log_body_len               0.284    0.549         False               True
+missing_date               1.644    2.272         False               True
+missing_msgid              1.644    6.819         False               True
+msgid_from_mismatch        2.896    3.172          True               True
+n_rcpt                     0.380    0.480         False               True
+n_received                 0.032    0.294          True               True
+n_url_domains              0.397    0.435         False               True
+n_urls                     0.676    0.513         False               True
+no_mailer                 12.323    1.527         False               True
+risky_attachment           1.644    8.351         False               True
+shortener_url              0.547    0.206         False              False
+subj_exclaim               8.866   11.507          True               True
+subj_upper_ratio           0.622    0.562         False              False
+url_density                0.781    0.477         False              False
+                                auc_sa_test_mean  ...  auc_csdmc_std
+group             n_indicators                    ...               
+Ссылки            6                        0.669  ...          0.052
+Заголовки         8                        0.804  ...          0.000
+Вложения          2                        0.508  ...          0.000
+Форма содержимого 5                        0.861  ...          0.003
+Все индикаторы    21                       0.919  ...          0.002
+
+[5 rows x 4 columns]

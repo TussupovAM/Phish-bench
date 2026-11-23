@@ -1,0 +1,7 @@
+[tune] SA ANN {'hidden': 64, 'dropout': 0.2} valF1=0.9908 loss=0.0243 ep=8 t=4s
+[tune] SA ANN {'hidden': 64, 'dropout': 0.5} valF1=0.9885 loss=0.0262 ep=8 t=4s
+[tune] SA ANN {'hidden': 256, 'dropout': 0.2} valF1=0.9885 loss=0.0251 ep=6 t=9s
+[tune] SA ANN {'hidden': 256, 'dropout': 0.5} valF1=0.9885 loss=0.0259 ep=6 t=9s
+[best] SA ANN: {'hidden': 64, 'dropout': 0.2}
+[tune] SA CNN {'filters': 64, 'dropout': 0.3} valF1=0.9676 loss=0.0522 ep=15 t=81s
+[tune] SA CNN {'filters': 64, 'dropout': 0.5} valF1=0.9652 loss=0.0511 ep=15 t=117s
