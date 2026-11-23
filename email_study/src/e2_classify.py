@@ -66,17 +66,30 @@ def run_dl(name, cfg, Xtf, Xseq, y, fit, val, te, seed):
     return m, log, predict(m, X[val]), predict(m, X[te])
 
 
+# Tuning results already on disk are reused (e.g. when a run was interrupted after tuning),
+# so that the configuration choice is not repeated; selection rule is the same.
+prev_t = pd.read_csv(RESULTS / "e2_tuning.csv") if (RESULTS / "e2_tuning.csv").exists() else pd.DataFrame()
 tuning, rows = [], []
 for ds in CORPORA:
     df = load([ds])
     y = df.label.to_numpy()
     T = texts(df)
     best = {}
+    done = prev_t[prev_t.dataset == ds] if len(prev_t) else prev_t
+    if len(done) == sum(len(g) for g in GRID.values()):
+        tuning += done.to_dict("records")
+        for name in GRID:
+            t = done[done.model == name]
+            best[name] = json.loads(t.sort_values(["val_f1", "val_loss"], ascending=[False, True])
+                                    .iloc[0].config)
+            print(f"[best, reused] {ds} {name}: {best[name]}", flush=True)
     # ---- step 1: tuning on seed 42 ---------------------------------------------------
     tr, te = split(y, 42)
     fit, val = train_test_split(tr, test_size=0.15, stratify=y[tr], random_state=42)
     tf, Xtf, vocab, Xseq = prepare(T, fit)
     for name, grid in GRID.items():
+        if name in best:
+            continue
         for cfg in grid:
             m, log, pv, _ = run_dl(name, cfg, Xtf, Xseq, y, fit, val, te, 42)
             r = metrics(y[val], (pv >= 0.5).astype(int), pv)
@@ -89,7 +102,8 @@ for ds in CORPORA:
         best[name] = json.loads(t.sort_values(["val_f1", "val_loss"], ascending=[False, True])
                                 .iloc[0].config)
         print(f"[best] {ds} {name}: {best[name]}", flush=True)
-    pd.DataFrame(tuning).to_csv(RESULTS / "e2_tuning.csv", index=False)
+    keep = prev_t[~prev_t.dataset.isin([x["dataset"] for x in tuning])] if len(prev_t) else prev_t
+    pd.concat([keep, pd.DataFrame(tuning)]).to_csv(RESULTS / "e2_tuning.csv", index=False)
 
     # ---- step 2: final runs over seeds ------------------------------------------------
     scores = {}
@@ -124,7 +138,7 @@ for ds in CORPORA:
 
 runs = pd.DataFrame(rows)
 old = RESULTS / "e2_runs.csv"
-if old.exists() and set(CORPORA) != {"SA", "CSDMC"}:
+if old.exists() and set(CORPORA) != {"SA", "CSDMC"}:  # merge with corpora run earlier
     prev = pd.read_csv(old)
     runs = pd.concat([prev[~prev.dataset.isin(CORPORA)], runs])
 runs.to_csv(old, index=False)

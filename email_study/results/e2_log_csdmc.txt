@@ -1,0 +1,4 @@
+[best, reused] CSDMC ANN: {'hidden': 64, 'dropout': 0.5}
+[best, reused] CSDMC CNN: {'filters': 64, 'dropout': 0.5}
+[best, reused] CSDMC LSTM: {'hidden': 128, 'bidirectional': True}
+[final] CSDMC seed42 ANN F1=0.9811 AUC=0.9984

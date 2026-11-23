@@ -8,3 +8,34 @@
 [tune] SA CNN {'filters': 128, 'dropout': 0.3} valF1=0.9679 loss=0.0540 ep=10 t=163s
 [tune] SA CNN {'filters': 128, 'dropout': 0.5} valF1=0.9677 loss=0.0486 ep=13 t=132s
 [best] SA CNN: {'filters': 128, 'dropout': 0.3}
+[tune] SA LSTM {'hidden': 64, 'bidirectional': False} valF1=0.9406 loss=0.1232 ep=11 t=269s
+[tune] SA LSTM {'hidden': 64, 'bidirectional': True} valF1=0.9679 loss=0.0496 ep=13 t=614s
+[tune] SA LSTM {'hidden': 128, 'bidirectional': False} valF1=0.9202 loss=0.1420 ep=10 t=431s
+[tune] SA LSTM {'hidden': 128, 'bidirectional': True} valF1=0.9657 loss=0.0522 ep=9 t=785s
+[best] SA LSTM: {'hidden': 64, 'bidirectional': True}
+[final] SA seed42 ANN F1=0.9721 AUC=0.9984
+[final] SA seed42 CNN F1=0.9683 AUC=0.9982
+[final] SA seed42 LSTM F1=0.9574 AUC=0.9959
+[final] SA seed43 ANN F1=0.9714 AUC=0.9978
+[final] SA seed43 CNN F1=0.9569 AUC=0.9957
+[final] SA seed43 LSTM F1=0.9581 AUC=0.9950
+[final] SA seed44 ANN F1=0.9763 AUC=0.9988
+[final] SA seed44 CNN F1=0.9597 AUC=0.9965
+[final] SA seed44 LSTM F1=0.9549 AUC=0.9970
+[tune] CSDMC ANN {'hidden': 64, 'dropout': 0.2} valF1=0.9842 loss=0.0430 ep=8 t=3s
+[tune] CSDMC ANN {'hidden': 64, 'dropout': 0.5} valF1=0.9842 loss=0.0415 ep=8 t=3s
+[tune] CSDMC ANN {'hidden': 256, 'dropout': 0.2} valF1=0.9810 loss=0.0367 ep=6 t=5s
+[tune] CSDMC ANN {'hidden': 256, 'dropout': 0.5} valF1=0.9778 loss=0.0388 ep=6 t=6s
+[best] CSDMC ANN: {'hidden': 64, 'dropout': 0.5}
+[tune] CSDMC CNN {'filters': 64, 'dropout': 0.3} valF1=0.9712 loss=0.0557 ep=15 t=52s
+[tune] CSDMC CNN {'filters': 64, 'dropout': 0.5} valF1=0.9716 loss=0.0540 ep=15 t=52s
+[tune] CSDMC CNN {'filters': 128, 'dropout': 0.3} valF1=0.9684 loss=0.0644 ep=14 t=83s
+[tune] CSDMC CNN {'filters': 128, 'dropout': 0.5} valF1=0.9618 loss=0.0648 ep=15 t=96s
+[best] CSDMC CNN: {'filters': 64, 'dropout': 0.5}
+[tune] CSDMC LSTM {'hidden': 64, 'bidirectional': False} valF1=0.9265 loss=0.1390 ep=10 t=169s
+[tune] CSDMC LSTM {'hidden': 64, 'bidirectional': True} valF1=0.9487 loss=0.0981 ep=11 t=370s
+[tune] CSDMC LSTM {'hidden': 128, 'bidirectional': False} valF1=0.8990 loss=0.1840 ep=12 t=363s
+[tune] CSDMC LSTM {'hidden': 128, 'bidirectional': True} valF1=0.9497 loss=0.0931 ep=10 t=628s
+[best] CSDMC LSTM: {'hidden': 128, 'bidirectional': True}
+[final] CSDMC seed42 ANN F1=0.9811 AUC=0.9984
+[final] CSDMC seed42 CNN F1=0.9656 AUC=0.9975
