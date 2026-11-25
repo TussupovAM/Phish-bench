@@ -1,0 +1,29 @@
+{
+  "ebbu_registered_domains": 21649,
+  "phiusiil": {
+    "rows": 235795,
+    "unique": 233758,
+    "after_removing_ebbu_domains": 227520,
+    "by_label": {
+      "0": 131273,
+      "1": 96247
+    },
+    "sampled": {
+      "0": 20000,
+      "1": 20000
+    },
+    "distinct_domains_sampled": 35274
+  },
+  "phishdb": {
+    "rows": 789054,
+    "unique": 777163,
+    "after_removing_ebbu_domains": 751026,
+    "by_label": {
+      "1": 751026
+    },
+    "sampled": {
+      "1": 20000
+    },
+    "distinct_domains_sampled": 14494
+  }
+}

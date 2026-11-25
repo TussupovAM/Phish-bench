@@ -1,0 +1,37 @@
+split,seed,family,input,model,phiusiil_tpr,phiusiil_fpr,phishdb_tpr
+random,42,ML,lexical,Logistic Regression,0.2559,0.00715,0.5246
+random,42,ML,lexical,Random Forest,0.58065,0.3822,0.76635
+random,42,ML,lexical,XGBoost,0.7889,0.9914,0.77285
+random,42,ML,characters,TF-IDF char n-grams + LR,0.4151,0.06065,0.7202
+random,42,DL,lexical,MLP,0.5789,0.17825,0.7717
+random,42,DL,characters,CNN (char),0.43215,0.08745,0.6263
+random,43,ML,lexical,Logistic Regression,0.2543,0.00685,0.52215
+random,43,ML,lexical,Random Forest,0.6356,0.5157,0.7738
+random,43,ML,lexical,XGBoost,0.79595,0.9998,0.78365
+random,43,ML,characters,TF-IDF char n-grams + LR,0.44395,0.06345,0.7336
+random,43,DL,lexical,MLP,0.4807,0.0483,0.6886
+random,43,DL,characters,CNN (char),0.3759,0.06055,0.5766
+random,44,ML,lexical,Logistic Regression,0.2554,0.0073,0.5226
+random,44,ML,lexical,Random Forest,0.66955,0.7,0.7734
+random,44,ML,lexical,XGBoost,0.80225,0.99895,0.7861
+random,44,ML,characters,TF-IDF char n-grams + LR,0.433,0.0661,0.7214
+random,44,DL,lexical,MLP,0.53765,0.1369,0.7475
+random,44,DL,characters,CNN (char),0.5027,0.1737,0.6498
+domain,42,ML,lexical,Logistic Regression,0.25005,0.00655,0.51955
+domain,42,ML,lexical,Random Forest,0.50485,0.11515,0.7614
+domain,42,ML,lexical,XGBoost,0.80235,0.9706,0.78545
+domain,42,ML,characters,TF-IDF char n-grams + LR,0.4354,0.05835,0.71665
+domain,42,DL,lexical,MLP,0.443,0.00555,0.6448
+domain,42,DL,characters,CNN (char),0.39925,0.06725,0.61305
+domain,43,ML,lexical,Logistic Regression,0.24945,0.0063,0.51915
+domain,43,ML,lexical,Random Forest,0.6166,0.5559,0.76855
+domain,43,ML,lexical,XGBoost,0.8054,0.99995,0.7757
+domain,43,ML,characters,TF-IDF char n-grams + LR,0.42985,0.0668,0.72165
+domain,43,DL,lexical,MLP,0.2998,0.00125,0.55905
+domain,43,DL,characters,CNN (char),0.3511,0.025,0.57895
+domain,44,ML,lexical,Logistic Regression,0.25805,0.00595,0.5264
+domain,44,ML,lexical,Random Forest,0.586,0.44505,0.7794
+domain,44,ML,lexical,XGBoost,0.80575,0.96705,0.78655
+domain,44,ML,characters,TF-IDF char n-grams + LR,0.43185,0.06705,0.72395
+domain,44,DL,lexical,MLP,0.34175,0.0023,0.5908
+domain,44,DL,characters,CNN (char),0.46905,0.1372,0.618

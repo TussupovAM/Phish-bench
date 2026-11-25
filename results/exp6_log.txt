@@ -1,0 +1,88 @@
+{
+  "n_rows": 11055,
+  "n_distinct_vectors": 5785,
+  "n_conflicting_vectors": 64,
+  "n_rows_with_conflicting_vectors": 357,
+  "best_accuracy_on_conflicting_rows": 0.680672268907563,
+  "protocol_A_test_rows_vector_in_train": 0.6860244233378562,
+  "protocol_A_test_rows_vector_in_train_with_other_label": 0.031478968792401626,
+  "protocol_A_n_rows": 11055,
+  "protocol_B_test_rows_vector_in_train": 0.01949051119849547,
+  "protocol_B_test_rows_vector_in_train_with_other_label": 0.01949051119849547,
+  "protocol_B_n_rows": 5849
+}
+C: grouped by feature vector: n=11055, groups=5785, phishing=0.443
+  Logistic Regression  acc=0.9256
+  Decision Tree        acc=0.9273
+  Random Forest        acc=0.9544
+  AdaBoost             acc=0.9342
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+  SVM (RBF)            acc=0.9470
+  KNN (k=5)            acc=0.9160
+  XGBoost              acc=0.9562
+  1D-CNN               acc=0.9431
+D: grouped, conflicting vectors removed: n=10698, groups=5721, phishing=0.444
+  Logistic Regression  acc=0.9390
+  Decision Tree        acc=0.9479
+  Random Forest        acc=0.9666
+  AdaBoost             acc=0.9492
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/usr/local/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+  SVM (RBF)            acc=0.9577
+  KNN (k=5)            acc=0.9329
+  XGBoost              acc=0.9686
+  1D-CNN               acc=0.9531
+                                   protocol                model  accuracy_mean  accuracy_std  f1_mean  mcc_mean  acc_conflicting_pooled
+0              C: grouped by feature vector  Logistic Regression         0.9256        0.0149   0.9151    0.8494                  0.5490
+1              C: grouped by feature vector        Decision Tree         0.9273        0.0208   0.9191    0.8536                  0.5070
+2              C: grouped by feature vector        Random Forest         0.9544        0.0102   0.9483    0.9077                  0.5406
+3              C: grouped by feature vector             AdaBoost         0.9342        0.0180   0.9246    0.8668                  0.5630
+4              C: grouped by feature vector            SVM (RBF)         0.9470        0.0105   0.9396    0.8927                  0.5658
+5              C: grouped by feature vector            KNN (k=5)         0.9160        0.0143   0.9059    0.8303                  0.5266
+6              C: grouped by feature vector              XGBoost         0.9562        0.0090   0.9507    0.9115                  0.5518
+7              C: grouped by feature vector               1D-CNN         0.9431        0.0134   0.9359    0.8851                  0.5714
+8   D: grouped, conflicting vectors removed  Logistic Regression         0.9390        0.0122   0.9306    0.8765                     NaN
+9   D: grouped, conflicting vectors removed        Decision Tree         0.9479        0.0095   0.9420    0.8951                     NaN
+10  D: grouped, conflicting vectors removed        Random Forest         0.9666        0.0107   0.9624    0.9325                     NaN
+11  D: grouped, conflicting vectors removed             AdaBoost         0.9492        0.0116   0.9421    0.8974                     NaN
+12  D: grouped, conflicting vectors removed            SVM (RBF)         0.9577        0.0084   0.9522    0.9146                     NaN
+13  D: grouped, conflicting vectors removed            KNN (k=5)         0.9329        0.0119   0.9253    0.8648                     NaN
+14  D: grouped, conflicting vectors removed              XGBoost         0.9686        0.0089   0.9647    0.9366                     NaN
+15  D: grouped, conflicting vectors removed               1D-CNN         0.9531        0.0131   0.9469    0.9054                     NaN

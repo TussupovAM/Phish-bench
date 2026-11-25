@@ -6,3 +6,4 @@ torch==2.14.1
 joblib
 matplotlib
 tabulate
+tldextract==5.4.0

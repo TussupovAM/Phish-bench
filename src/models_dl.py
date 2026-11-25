@@ -6,7 +6,7 @@ Character-level URL models (dataset D2):
   CharCNNLSTM  embedding -> Conv1d (k=5) -> max-pool(2) -> LSTM -> MLP
 
 Feature-vector model (dataset D1), a re-implementation of the best 1D-CNN
-configuration reported by Yerima & Alzaylaee [7]: two Conv1d blocks with 64
+configuration reported by Yerima & Alzaylaee (2020): two Conv1d blocks with 64
 filters of length 12 and 6, max-pool 2, dense 32, sigmoid output.
 """
 from __future__ import annotations
@@ -77,7 +77,7 @@ class CharCNNLSTM(nn.Module):
 
 
 class FeatureCNN(nn.Module):
-    """1D-CNN over the 30 UCI features, after [7] (CNN2, 64 filters, 12/6, FC 32)."""
+    """1D-CNN over the 30 UCI features, after Yerima & Alzaylaee (CNN2, 64 filters, 12/6, FC 32)."""
 
     def __init__(self, n_features=30, filters=64):
         super().__init__()
@@ -140,3 +140,19 @@ def train(model, Xtr, ytr, Xva, yva, *, epochs=10, patience=2, batch=128, lr=1e-
     model.load_state_dict(best_state)
     return {"epochs_run": len(hist), "best_val_loss": best,
             "train_s": time.perf_counter() - t_start, "val_history": hist}
+
+
+class LexMLP(nn.Module):
+    """Multi-layer perceptron on the 20 standardised lexical URL features (dataset D2).
+
+    Used as the DL counterpart of the classical models on exactly the same input,
+    to separate the effect of the model family from that of the input representation.
+    """
+
+    def __init__(self, n_features=20, hidden=128):
+        super().__init__()
+        self.net = nn.Sequential(nn.Linear(n_features, hidden), nn.ReLU(), nn.Dropout(0.2),
+                                 nn.Linear(hidden, 64), nn.ReLU(), nn.Dropout(0.2), nn.Linear(64, 1))
+
+    def forward(self, x):
+        return self.net(x).squeeze(1)

@@ -34,8 +34,8 @@ SEED = 42
 
 
 # --------------------------------------------------------------------------- #
-# Dataset D1: UCI Phishing Websites (used by Shahrivari et al. [3] and
-# Yerima & Alzaylaee [7]). 11,055 rows, 30 ternary features, label in {-1, 1}.
+# Dataset D1: UCI Phishing Websites (used by Shahrivari et al. (2020) and
+# Yerima & Alzaylaee (2020)). 11,055 rows, 30 ternary features, label in {-1, 1}.
 # Positive class (1) = phishing in all our metrics.
 # --------------------------------------------------------------------------- #
 def load_uci(deduplicate: bool = False) -> tuple[pd.DataFrame, np.ndarray]:
@@ -57,6 +57,27 @@ SCHEME = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*://")
 
 def normalise_url(u: str) -> str:
     return SCHEME.sub("", u.strip())
+
+
+_TLD = None
+
+
+def host_of(u: str) -> str:
+    """Host part of a scheme-less URL, lower-case, without user info and port."""
+    return u.split("/", 1)[0].split("?", 1)[0].split("@")[-1].split(":")[0].lower().strip(".")
+
+
+def reg_domain(u: str) -> str:
+    """Registered domain of a scheme-less URL (Public Suffix List snapshot bundled with
+    tldextract, private suffixes such as github.io included, so x.github.io and y.github.io
+    are different owners). IP hosts and hosts without a public suffix are returned as is."""
+    global _TLD
+    if _TLD is None:
+        import tldextract
+        _TLD = tldextract.TLDExtract(suffix_list_urls=(), cache_dir=None, include_psl_private_domains=True)
+    h = host_of(u)
+    r = _TLD(h)
+    return r.top_domain_under_public_suffix or h
 
 
 def load_ebbu() -> pd.DataFrame:

@@ -1,0 +1,13 @@
+{
+  "n_rows": 11055,
+  "n_distinct_vectors": 5785,
+  "n_conflicting_vectors": 64,
+  "n_rows_with_conflicting_vectors": 357,
+  "best_accuracy_on_conflicting_rows": 0.680672268907563,
+  "protocol_A_test_rows_vector_in_train": 0.6860244233378562,
+  "protocol_A_test_rows_vector_in_train_with_other_label": 0.031478968792401626,
+  "protocol_A_n_rows": 11055,
+  "protocol_B_test_rows_vector_in_train": 0.01949051119849547,
+  "protocol_B_test_rows_vector_in_train_with_other_label": 0.01949051119849547,
+  "protocol_B_n_rows": 5849
+}

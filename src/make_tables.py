@@ -45,18 +45,29 @@ def emit(title, df, label, wide=False):
 e1 = pd.read_csv(RESULTS / "exp1_uci_ml_summary.csv")
 e2b = pd.read_csv(RESULTS / "exp2b_uci_cnn_summary.csv")
 uci = pd.concat([e1, e2b], ignore_index=True)
+e6 = pd.read_csv(RESULTS / "exp6_uci_groups_summary.csv")
+e6.loc[e6.model == "1D-CNN", "model"] = "1D-CNN (features, after [7])"
 rows = []
 for model in ML_ORDER + ["1D-CNN (features, after [7])"]:
     a = uci[(uci.model == model) & uci.protocol.str.startswith("A")].iloc[0]
     b = uci[(uci.model == model) & uci.protocol.str.startswith("B")].iloc[0]
-    rows.append({"Model": model.replace(" (features, after [7])", " [7]"),
+    c = e6[(e6.model == model) & e6.protocol.str.startswith("C")].iloc[0]
+    d = e6[(e6.model == model) & e6.protocol.str.startswith("D")].iloc[0]
+    rows.append({"Model": model.replace(" (features, after [7])", " \\cite{yerima2020}"),
                  "Acc. A (%)": pm(a.accuracy_mean, a.accuracy_std),
                  "Acc. B (%)": pm(b.accuracy_mean, b.accuracy_std),
-                 "$\\Delta$ (pp)": f"{(b.accuracy_mean - a.accuracy_mean) * 100:+.2f}",
-                 "F1 B (%)": pct(b.f1_mean), "MCC B": f"{b.mcc_mean:.3f}",
-                 "Train B (s)": f"{b.fit_s_mean:.2f}"})
-emit("UCI Phishing Websites, 10-fold CV. A: all 11,055 rows (protocol of [3]); "
-     "B: 5,849 unique rows. Mean $\\pm$ std over folds.", pd.DataFrame(rows), "tab:uci", wide=True)
+                 "Acc. C (%)": pm(c.accuracy_mean, c.accuracy_std),
+                 "Acc. D (%)": pm(d.accuracy_mean, d.accuracy_std),
+                 "C$-$A (pp)": f"{(c.accuracy_mean - a.accuracy_mean) * 100:+.2f}",
+                 "F1 C (%)": pct(c.f1_mean), "MCC C": f"{c.mcc_mean:.3f}",
+                 "Acc. confl. C (%)": pct(c.acc_conflicting_pooled, 1)})
+info6 = json.load(open(RESULTS / "exp6_uci_groups_info.json"))
+emit("UCI Phishing Websites, 10-fold CV, mean $\\pm$ std over folds. A: all 11,055 rows, random folds "
+     "(protocol of \\cite{shahrivari2020}); B: 5,849 unique rows, random folds; C: all rows, folds "
+     f"grouped by feature vector ({info6['n_distinct_vectors']:,} groups); D: as C without the "
+     f"{info6['n_rows_with_conflicting_vectors']} rows whose vector carries both labels. "
+     "Acc. confl.: accuracy on those rows under C (best attainable "
+     f"{info6['best_accuracy_on_conflicting_rows'] * 100:.1f}\\%).", pd.DataFrame(rows), "tab:uci", wide=True)
 
 # ---- Table: URLs (Ebbu2017), 7 ML + 3 DL ------------------------------------------
 e2 = pd.read_csv(RESULTS / "exp2_urls_summary.csv")
@@ -108,6 +119,50 @@ rows = [{"$\\delta$": f"{r.delta:.1f}", "Escalated (%)": pct(r.escalation_rate_m
          "Mean latency (ms)": f"{r.expected_latency_ms_mean:.3f}"} for r in e5.itertuples()]
 emit(f"Two-tier cascade: XGBoost, escalating to {tier2} when $|p-0.5|<\\delta$ "
      "($\\delta$=0: XGBoost only; 0.5: DL only).", pd.DataFrame(rows), "tab:cascade")
+
+# ---- Table: generalisation and representation (experiment 7) ----------------------
+e7 = pd.read_csv(RESULTS / "exp7_summary.csv")
+x7 = pd.read_csv(RESULTS / "exp7_external.csv")
+ci = pd.read_csv(RESULTS / "exp8_ci.csv")
+ORDER7 = ["Logistic Regression", "Random Forest", "XGBoost", "MLP", "TF-IDF char n-grams + LR", "CNN (char)"]
+rows = []
+for model in ORDER7:
+    r = e7[(e7.model == model) & (e7.split == "random")].iloc[0]
+    d = e7[(e7.model == model) & (e7.split == "domain")].iloc[0]
+    x = x7[(x7.model == model) & (x7.split == "domain")].iloc[0]
+    cd = ci[(ci.model == model) & (ci.split == "domain") & (ci.metric == "f1_full")].iloc[0]
+    rows.append({"Model": model, "Input": "lexical" if d.input == "lexical" else "chars", "Type": d.family,
+                 "F1 rand. (%)": pm(r.f1_mean, r.f1_std),
+                 "F1 domain (%)": f"{pct(d.f1_mean)} [{pct(cd.ci_low, 1)}, {pct(cd.ci_high, 1)}]",
+                 "$\\Delta$ (pp)": f"{(d.f1_mean - r.f1_mean) * 100:+.2f}",
+                 "FPR dom. (%)": pct(d.fpr_mean), "PR-AUC dom.": f"{d.pr_auc_mean:.4f}",
+                 "PhiUSIIL TPR (%)": pct(x.phiusiil_tpr_mean, 1), "PhiUSIIL FPR (%)": pct(x.phiusiil_fpr_mean, 1),
+                 "PhishDB TPR (%)": pct(x.phishdb_tpr_mean, 1)})
+emit("Ebbu2017 under a random and a domain-disjoint split (mean $\\pm$ std over 3 seeds; "
+     "domain F1 with 95\\% bootstrap interval), and the domain-split models on independent sources "
+     "whose registered domains never occur in Ebbu2017: PhiUSIIL \\cite{prasad2024} phishing (TPR) and "
+     "legitimate home pages (FPR), Phishing.Database links active in Oct.~2026 \\cite{phishdb2026} (TPR). "
+     "Threshold 0.5.", pd.DataFrame(rows), "tab:general", wide=True)
+
+# ---- Table: calibration and prevalence-aware thresholds (experiment 8) -------------
+e8 = pd.read_csv(RESULTS / "exp8_prevalence.csv")
+c8 = pd.read_csv(RESULTS / "exp8_calibration.csv")
+rows = []
+for model in ORDER7:
+    c = c8[(c8.model == model) & (c8.split == "domain")].iloc[0]
+    g = lambda t: e8[(e8.model == model) & (e8.split == "domain") & (e8.threshold == t)].iloc[0]
+    a, f, v = g("t_0.5"), g("t_F1"), g("t_FPR")
+    cf = ci[(ci.model == model) & (ci.split == "domain") & (ci.metric == "f1_pi_tF1")].iloc[0]
+    rows.append({"Model": model, "ECE raw$\\to$Platt": f"{c.ece_raw:.3f}$\\to${c.ece_platt:.3f}",
+                 "P/R/F1 @0.5 (%)": f"{pct(a.precision_mean, 1)} / {pct(a.recall_mean, 1)} / {pct(a.f1_mean, 1)}",
+                 "P/R @$t_{F1}$ (%)": f"{pct(f.precision_mean, 1)} / {pct(f.recall_mean, 1)}",
+                 "F1 @$t_{F1}$ (%)": f"{pct(f.f1_mean, 1)} [{pct(cf.ci_low, 1)}, {pct(cf.ci_high, 1)}]",
+                 "P/R @$t_{FPR}$ (%)": f"{pct(v.precision_mean, 1)} / {pct(v.recall_mean, 1)}"})
+emit("Domain-disjoint split, test set re-sampled to 1\\% phishing (mean of 50 draws $\\times$ 3 seeds). "
+     "Thresholds chosen on validation data only: 0.5; $t_{F1}$ maximises F1 at 1\\% prevalence via "
+     "Eq.~(\\ref{eq:precision}); $t_{FPR}$ maximises recall with validation FPR $\\le$ 0.5\\%. "
+     "ECE on the balanced test set before and after Platt scaling. [ ]: 95\\% bootstrap interval.",
+     pd.DataFrame(rows), "tab:threshold", wide=True)
 
 info = json.load(open(RESULTS / "exp2_dataset_info.json"))
 md.append("## Environment\n\n```json\n" + json.dumps(info["environment"], indent=2) + "\n```\n")

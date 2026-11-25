@@ -8,7 +8,7 @@
 
 \begin{document}
 
-\title{Traditional Machine Learning versus Deep Learning for Phishing Detection in Remote Work Environments: A Reproducible Comparison of Accuracy, Class Imbalance and Latency}
+\title{Machine Learning versus Deep Learning for Phishing URL Detection: Domain-Disjoint Evaluation, Input Representation, Class Imbalance and Latency}
 
 \author{\IEEEauthorblockN{Altair Tussupov}
 \IEEEauthorblockA{Department of Computer Science and Engineering\\
@@ -18,197 +18,211 @@ Email: altair.tussupov@gmail.com}}
 \maketitle
 
 \begin{abstract}
-Published comparisons of machine learning (ML) and deep learning (DL) phishing detectors are rarely comparable: they use different datasets, balanced test sets and, almost never, latency measured on ordinary hardware. We compare seven traditional ML classifiers and four DL models under one protocol on two public datasets: the UCI Phishing Websites dataset (11,055 rows, 30 features) and the Ebbu2017 corpus of raw URLs (54,634 unique URLs after cleaning). All code, data versions and raw results are released. We report four findings. (1) 47.1\% of the UCI rows are exact duplicates; removing them lowers the accuracy of every model, by up to 3.78 percentage points (pp) for a decision tree. (2) On deduplicated feature vectors DL brings no gain: XGBoost reaches 95.50\% accuracy and a 1D-CNN 94.31\%. On raw URL strings a character-level CNN reaches an F1 of 96.84\% against 92.45\% for the best ML model on 20 lexical features. (3) When phishing makes up 1\% of the test traffic, precision falls to 13.3\% for Random Forest and 29.7\% for the CNN, while accuracy stays near 94--98\%, below the 99\% of a trivial ``always legitimate'' rule; the drop matches the analytic prediction within 0.12 pp. (4) On one CPU thread the three character-level DL models, XGBoost, logistic regression and the decision tree classify a URL in under 1~ms (median); the most accurate model is also among the fastest, so the latency--accuracy trade-off assumed in the literature does not appear at this model size.
+Comparisons of machine learning (ML) and deep learning (DL) phishing detectors often rest on random splits of balanced benchmark data and on models that receive different inputs. We compare classical and DL models under one protocol on the UCI Phishing Websites dataset (11,055 rows) and the Ebbu2017 URL corpus (54,634 unique URLs), and test the URL models on two independent sources. All code, data versions and raw results are released. (1) On UCI, 47.1\% of rows are duplicates and 357 rows share a feature vector with a row of the opposite label; folds grouped by feature vector lower accuracy by up to 3.66 percentage points (pp) relative to the usual protocol. (2) On Ebbu2017, the gain of a character-level CNN over models on 20 lexical features comes from the input, not from depth: on the same characters, TF-IDF character n-grams with logistic regression reach a higher F1 (98.20\% vs.\ 96.84\%), and on the same lexical features an MLP does not beat XGBoost. (3) A split in which no registered domain occurs in both training and test data lowers F1 by 1.3--2.2~pp for five of six models; on independent sources whose domains never occur in Ebbu2017, recall at the default threshold falls to 25--81\% and the ranking of models changes. (4) At 1\% phishing prevalence the default threshold yields 13--30\% precision on the random split; a threshold chosen on validation data for that prevalence raises F1 on the domain-disjoint split from 54.6\% to 82.7\% (95\% CI 78.3--86.5\%) for the n-gram model and from 40.8\% to 75.6\% for the CNN. (5) The CNN and XGBoost classify a URL in under 1~ms on one CPU thread.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Phishing detection, machine learning, deep learning, class imbalance, inference latency, reproducibility, remote work
+Phishing URL detection, machine learning, deep learning, generalization, data leakage, class imbalance, calibration, inference latency, reproducibility
 \end{IEEEkeywords}
 
 % ============================================================================
 \section{Introduction}
 
-The shift to remote work in 2020 moved a large share of corporate communication to e-mail and other online channels, used from home networks and personal devices. Attackers reacted quickly: Barracuda reported that COVID-19-themed spear-phishing rose by 667\% between the end of February and March 2020 \cite{barracuda2020}, and a STRIDE risk analysis of social networks motivated by pandemic-era remote work identified phishing as their main threat \cite{sharma2023}.
+Phishing links reach users through e-mail, messaging and collaboration tools, and the shift to remote work in 2020 moved much of this traffic to home networks and personal devices. COVID-19-themed spear-phishing rose by 667\% between the end of February and March 2020 \cite{barracuda2020}, and a STRIDE analysis of social networks identified phishing as their main threat \cite{sharma2023}. A URL classifier is attractive in this setting because it needs only the link, not the page or the message body.
 
-Three practical properties decide whether a detector is useful in this setting, and published work reports them unevenly.
+Published accuracies of URL detectors are high, but four properties of the evaluation decide whether they say anything about deployment, and they are reported unevenly.
 
-\emph{Class imbalance.} Phishing is rare in real traffic. Ho et~al. \cite{ho2019} found hundreds of lateral phishing e-mails among 113 million employee-sent e-mails of 92 organizations. Yet most benchmark datasets are close to balanced, and accuracy measured on them says little about precision in deployment.
+\emph{Generalization.} A random split of URLs puts URLs of the same domain or campaign into both training and test data, so a model can recognise known domains and templates instead of signs of new attacks. Such leakage is a known source of inflated results in ML-based science \cite{kapoor2023}; a 2026 study of URL detection therefore used domain-disjoint and temporal splits, independent target data, calibration and low-FPR thresholds \cite{glazyrina2026}.
 
-\emph{Comparability.} Accuracy figures for ML and DL detectors come from different datasets and protocols, so they cannot be put side by side.
+\emph{Comparability of inputs.} ML and DL models are often compared on different inputs (engineered features vs.\ raw strings), which confounds the model family with the representation.
 
-\emph{Cost.} Detection on a remote worker's machine must be fast and small, but inference latency on commodity hardware is rarely measured.
+\emph{Class imbalance.} Phishing is rare in real traffic: Ho et~al. \cite{ho2019} found hundreds of lateral phishing e-mails among 113 million employee-sent e-mails. Accuracy on near-balanced test sets says little about precision in deployment, and a threshold of 0.5 is rarely appropriate there.
 
-This paper addresses these points with experiments rather than with figures collected from different studies. Its contributions are:
+\emph{Cost.} Detection on an endpoint must be fast and small, but latency on commodity hardware is rarely measured.
+
+Contributions:
 \begin{enumerate}
-\item A comparison of seven ML and four DL models under one protocol on two public datasets, with accuracy, precision, recall, F1, false-positive rate (FPR), Matthews correlation coefficient (MCC) and PR-AUC.
-\item Evidence that duplicate rows in the widely used UCI dataset inflate cross-validated accuracy, with the size of the effect per model.
-\item A measurement of how precision collapses at realistic phishing prevalence, and a check that a closed-form expression predicts it.
-\item End-to-end CPU latency, model size and memory for every model, and a measured two-tier (fast--slow) cascade.
-\item A public repository with code, pinned data versions and the raw predictions behind every table.
+\item On UCI Phishing Websites, a grouped cross-validation that never splits a feature vector, and a measurement of how duplicates and the 64 vectors with conflicting labels affect accuracy.
+\item On Ebbu2017, a 2$\times$2 design (classical/DL $\times$ lexical features/characters) that separates the effect of the model family from that of the input, including a strong classical baseline on characters.
+\item Domain-disjoint evaluation and tests on two independent sources whose registered domains never occur in the training corpus.
+\item Precision at realistic prevalence, its closed-form prediction, calibration and prevalence-aware thresholds chosen on validation data, with bootstrap confidence intervals and paired tests.
+\item CPU latency, model size and memory, and a public repository with code, pinned data and raw predictions.
 \end{enumerate}
 
-Section~\ref{sec:related} reviews related work, Section~\ref{sec:method} describes the methodology, Section~\ref{sec:results} presents the results, Section~\ref{sec:discussion} discusses them together with limitations and open problems, and Section~\ref{sec:conclusion} concludes.
+Section~\ref{sec:related} reviews related work, Section~\ref{sec:method} describes the methodology, Section~\ref{sec:results} presents the results, Section~\ref{sec:discussion} discusses them and their limitations, and Section~\ref{sec:conclusion} concludes.
 
 % ============================================================================
 \section{Related Work}\label{sec:related}
 
-\emph{Traditional ML on engineered features.} Shahrivari et~al. \cite{shahrivari2020} compared nine classifiers (twelve configurations, counting four SVM kernels) on the UCI Phishing Websites dataset \cite{uci2012}, which holds 6,157 legitimate and 4,898 phishing websites described by 30 features. With 10-fold cross-validation, XGBoost reached 98.32\% accuracy and Random Forest 97.27\%. The features include WHOIS, DNS and page-content attributes, so computing them for a new URL requires network look-ups.
+\emph{Classical ML on engineered features.} Shahrivari et~al. \cite{shahrivari2020} compared nine classifiers on the UCI Phishing Websites dataset \cite{uci2012} (6,157 legitimate and 4,898 phishing websites, 30 features). With 10-fold cross-validation, XGBoost reached 98.32\% accuracy and Random Forest 97.27\%. Some features need WHOIS, DNS or page look-ups.
 
-\emph{Deep learning.} Yerima and Alzaylaee \cite{yerima2020} applied a 1D-CNN to the same UCI feature vectors. Their best configuration reached 97.3\% accuracy, 98.2\% recall and an F1 of 0.976 in 10-fold cross-validation, on a 4~GB RAM Linux machine. Sahingoz et~al. \cite{sahingoz2019} built the Ebbu2017 corpus of PhishTank and legitimate URLs and classified URLs from lexical and NLP features.
+\emph{Deep learning.} Yerima and Alzaylaee \cite{yerima2020} applied a 1D-CNN to the same feature vectors and reached 97.3\% accuracy in 10-fold cross-validation. Sahingoz et~al. \cite{sahingoz2019} built the Ebbu2017 corpus of PhishTank and legitimate URLs and classified URLs from lexical and NLP features.
 
-\emph{Large language models.} Blake \cite{blake2025} fine-tuned Llama-Guard-3-1B with Low-Rank Adaptation (LoRA), which trains only small low-rank matrices added to a frozen model. The resulting Phishsense-1B reached 97.5\% accuracy on a balanced custom e-mail dataset, but 70\% on a harder real-world dataset.
+\emph{Large language models and corpora.} Phishsense-1B, a LoRA-tuned Llama-Guard-3-1B, reached 97.5\% accuracy on a balanced e-mail dataset but 70\% on a harder real-world one \cite{blake2025}. On the MeAJOR e-mail corpus (135,894 e-mails) XGBoost reached an F1 of 98.34\% \cite{mendes2025}. PhishIntel \cite{li2024} combines a fast local check with a slow crawling-based detector that can take about ten seconds.
 
-\emph{Datasets and deployment.} The MeAJOR corpus \cite{mendes2025} merges five open sources into 135,894 e-mails; on it XGBoost reached an F1 of 98.34\%, ahead of RF, MLP and CNN baselines. PhishIntel \cite{li2024} addresses latency in deployment with a fast task (local blacklist and result cache) and a slow task (online blacklist, page crawling and a reference-based detector); its authors note that crawling and analysis can each take up to about ten seconds, while users expect a response within about two seconds.
+\emph{Evaluation protocols.} Kapoor and Narayanan \cite{kapoor2023} list leakage between training and test data among the main causes of irreproducible ML results. Glazyrina et~al. \cite{glazyrina2026} trained on PhiUSIIL \cite{prasad2024} and tested on later, domain-disjoint data, chose thresholds for 1\% and 0.1\% FPR after Platt calibration, and found that a nominal 0.1\% FPR threshold gave 0.32\% FPR under temporal shift. Their work uses one feature-based model family; we compare ML and DL families and input representations under the same kind of controls.
 
-\emph{Gap.} None of these studies compares ML and DL on the same data under realistic prevalence while also measuring latency on commodity hardware. Accuracies from \cite{shahrivari2020,yerima2020,blake2025,mendes2025} come from different datasets and tasks (websites, URLs, e-mails) and are not directly comparable.
+\emph{Gap.} Accuracies in \cite{shahrivari2020,yerima2020,blake2025,mendes2025} come from different datasets, tasks and random splits and cannot be compared directly; none separates model family from input representation.
 
 % ============================================================================
 \section{Methodology}\label{sec:method}
 
 \subsection{Datasets}
 
-\emph{D1 -- UCI Phishing Websites} \cite{uci2012}: 11,055 rows, 30 ternary features, 4,898 phishing (44.3\%) and 6,157 legitimate. We use the copy published with \cite{shahrivari2020}. 5,206 rows (47.1\%) are exact duplicates of other rows, leaving 5,849 unique rows (3,019 phishing, 51.6\%). In 64 cases the same feature vector appears with both labels.
+\emph{D1 -- UCI Phishing Websites} \cite{uci2012}: 11,055 rows, 30 ternary features, 4,898 phishing (44.3\%). We use the copy published with \cite{shahrivari2020}. 5,206 rows (47.1\%) exactly duplicate other rows, leaving 5,849 unique rows. The rows contain 5,785 distinct feature vectors; 64 of them occur with both labels, in 357 rows (3.2\%).
 
-\emph{D2 -- Ebbu2017 URLs} \cite{sahingoz2019}: 37,175 phishing and 36,400 legitimate URLs. In this corpus 36.8\% of legitimate URLs but only 1.8\% of phishing URLs begin with \texttt{https://}, an artefact of how the two classes were collected. We therefore remove the scheme from every URL and then drop duplicate URL strings. This leaves 54,634 unique URLs: 24,726 phishing (45.3\%) and 29,908 legitimate. The median URL length is 49 characters; 5.3\% of URLs exceed 128 characters.
+\emph{D2 -- Ebbu2017 URLs} \cite{sahingoz2019}: 37,175 phishing and 36,400 legitimate URLs. 36.8\% of legitimate but 1.8\% of phishing URLs begin with \texttt{https://}, an artefact of collection, so we remove the scheme and then drop duplicate strings: 54,634 unique URLs, 24,726 phishing (45.3\%), from 21,649 registered domains. Registered domains are derived with the Public Suffix List snapshot of \texttt{tldextract} 5.4.0, private suffixes included (so \texttt{a.github.io} and \texttt{b.github.io} are different owners); IP hosts are kept as they are.
 
-Both datasets are fetched from pinned commits and verified by SHA-256 checksums (Section~\ref{sec:repro}).
+\emph{D3 -- independent sources.} (a) PhiUSIIL \cite{prasad2024}: 235,795 URLs collected later than Ebbu2017. Its legitimate URLs are all site home pages (\texttt{https://www.<domain>}), so we use it to measure the recall (TPR) on phishing and the FPR on legitimate home pages separately, not a pooled accuracy. (b) Phishing.Database \cite{phishdb2026}: links listed as active phishing on 2~October 2026 (commit \texttt{12a20bf}); phishing only, so only TPR is measured, and the community list may contain some mislabelled pages. For both we strip the scheme, drop duplicates, remove every URL whose registered domain occurs anywhere in D2, and draw 20,000 URLs per class (seed 42). The Phishing.Database sample covers 14,494 domains.
+
+All datasets are fetched from pinned versions and verified by SHA-256 checksums (Section~\ref{sec:repro}).
 
 \subsection{Models}
 
-\emph{Traditional ML (7 models)}, scikit-learn and XGBoost with fixed hyper-parameters (no tuning): logistic regression; decision tree; Random Forest (300 trees); AdaBoost (200 estimators); SVM with RBF kernel ($C{=}1$, $\gamma$=\texttt{scale}); KNN ($k{=}5$); XGBoost (300 trees, depth 6, learning rate 0.1). Logistic regression, SVM and KNN receive standardized inputs.
+\emph{Classical ML} (scikit-learn, XGBoost; fixed hyper-parameters): logistic regression; decision tree; Random Forest (300 trees); AdaBoost (200 estimators); SVM with RBF kernel; KNN ($k{=}5$); XGBoost (300 trees, depth 6, learning rate 0.1). On D1 they use the 30 dataset features; on D2, 20 lexical features computed from the URL string alone: lengths of URL, host and path; counts of dots, hyphens, digits, slashes, \texttt{@}, \texttt{?}, \texttt{=}, \texttt{\_} and \texttt{\%}; number of subdomains; IP-address host; \texttt{www} prefix; digit ratio; Shannon entropy; suspicious keywords; top-level-domain length; longest token. \emph{TF-IDF char n-grams + LR} is the classical baseline on characters: TF-IDF of character 1--5-grams (minimum document frequency 2, sublinear term frequency) and logistic regression, with $C\in\{1,10,100\}$ chosen on validation log-loss.
 
-On D1 these models use the 30 dataset features. On D2 they use 20 lexical features computed from the URL string alone, without network access: lengths of URL, host and path; counts of dots, hyphens, digits, slashes, \texttt{@}, \texttt{?}, \texttt{=}, \texttt{\_} and \texttt{\%}; number of subdomains; IP-address host; \texttt{www} prefix; digit ratio; Shannon entropy; number of suspicious keywords; top-level-domain length; longest token.
-
-\emph{Deep learning (4 models)}, PyTorch on CPU:
-\begin{itemize}
-\item \textbf{1D-CNN on D1}, re-implementing the best configuration of \cite{yerima2020}: two convolution blocks (64 filters of length 12 and 6, max-pooling 2), a 32-unit dense layer, sigmoid output; 41,921 parameters.
-\item \textbf{CNN (char)} on D2: 32-dimensional character embedding, three parallel convolutions (kernels 3, 5, 7; 64 filters each), global max-pooling, a 64-unit dense layer; 46,433 parameters.
-\item \textbf{LSTM (char)} on D2: the same embedding, one LSTM layer with 64 units; 28,257 parameters.
-\item \textbf{CNN+LSTM (char)} on D2: embedding, a convolution (64 filters, kernel 5), max-pooling 2, an LSTM layer with 64 units; 46,753 parameters.
-\end{itemize}
-URLs are encoded as printable-ASCII codes and truncated or padded to 128 characters. All DL models use Adam (learning rate $10^{-3}$) and binary cross-entropy. The weights with the lowest validation loss are kept. On D2: batch 128, at most 10 epochs, patience 2. On D1: batch 64, at most 200 epochs, patience 20, following \cite{yerima2020}.
+\emph{Deep learning} (PyTorch, CPU): \textbf{1D-CNN} on D1, re-implementing the best configuration of \cite{yerima2020} (two convolution blocks, 64 filters of length 12 and 6; 41,921 parameters). On D2: \textbf{CNN (char)} (32-dimensional character embedding, convolutions with kernels 3, 5 and 7, 64 filters each, global max-pooling, 64-unit dense layer; 46,433 parameters), \textbf{LSTM (char)} (one 64-unit LSTM; 28,257 parameters) and \textbf{CNN+LSTM (char)} (46,753 parameters), on URLs truncated or padded to 128 printable-ASCII characters; and \textbf{MLP}, the DL model on the same 20 standardized lexical features (layers of 128 and 64 units, dropout 0.2). DL models use Adam (learning rate $10^{-3}$), binary cross-entropy and early stopping on validation loss.
 
 \subsection{Evaluation protocols}
 
-\emph{D1.} Stratified 10-fold cross-validation (seed 42) under two protocols. Protocol~A uses all 11,055 rows, as in \cite{shahrivari2020}. Protocol~B uses the 5,849 unique rows, so no feature vector appears in both training and test folds. The 1D-CNN holds out 10\% of each training fold for early stopping.
+\emph{D1.} Stratified 10-fold cross-validation (seed 42). A: all rows, as in \cite{shahrivari2020}. B: the 5,849 unique rows. C: all rows, with folds grouped by feature vector, so no vector occurs in both training and test folds. D: as C, without the 357 rows whose vector has both labels.
 
-\emph{D2.} Stratified 80/20 train/test split, repeated with seeds 42, 43 and 44 (10,927 test URLs per seed). ML models are fitted on the training part. DL models hold out 10\% of the training part for early stopping. The test part is never used for training, tuning or early stopping. We report mean $\pm$ standard deviation over seeds.
+\emph{D2, random split.} Stratified 80/20 split, seeds 42, 43, 44 (10,927 test URLs). For the models of Table~\ref{tab:general}, 10\% of the training part is held out as validation data and all models are fitted on the remaining 90\%.
 
-\emph{Prevalence.} To measure the effect of class imbalance, we keep all legitimate test URLs of D2 and randomly draw phishing test URLs so that phishing makes up 10\%, 2\% or 1\% of the test set (50 draws per level and seed). The trained models and the 0.5 decision threshold (0 for the SVM decision value) are not changed.
+\emph{D2, domain-disjoint split.} For each seed, one fold of a stratified 5-fold split grouped by registered domain is the test set (10,928 URLs); validation data are one fold of a 10-fold grouped split of the remaining URLs. No registered domain is shared between training, validation and test data (checked in code).
 
-\subsection{Metrics}
+\emph{Independent sources.} The domain-split models of each seed are applied unchanged to D3.
 
-The positive class is phishing. Besides accuracy, precision, recall and F1 we report FPR, MCC and the area under the precision--recall curve (PR-AUC), which remain informative under imbalance. For a classifier with true-positive rate TPR and false-positive rate FPR, precision at phishing prevalence $\pi$ is
+\emph{Prevalence.} All legitimate test URLs are kept and phishing test URLs are drawn so that phishing makes up 10\%, 2\% or 1\% of the test set (50 draws per level and seed).
+
+\emph{Calibration and thresholds.} On validation data we fit Platt scaling \cite{platt1999} and choose two thresholds for 1\% prevalence: $t_{F1}$ maximises F1 computed from validation TPR and FPR with Eq.~\eqref{eq:precision}, so no imbalanced validation set is needed; $t_{FPR}$ maximises recall subject to validation FPR $\le$ 0.5\%. Test data are never used for fitting, early stopping, tuning, calibration or thresholds.
+
+\subsection{Metrics and statistics}
+
+The positive class is phishing. We report accuracy, precision, recall (TPR), F1, false-positive rate (FPR), Matthews correlation coefficient (MCC), PR-AUC and expected calibration error (ECE, 15 bins). Precision at prevalence $\pi$ follows from TPR and FPR:
 \begin{equation}
 \text{Precision}(\pi) = \frac{\text{TPR}\cdot\pi}{\text{TPR}\cdot\pi + \text{FPR}\cdot(1-\pi)}.
 \label{eq:precision}
 \end{equation}
-We compare this prediction, computed from each model's TPR and FPR on the full test set, with the measured precision.
+95\% confidence intervals are percentile bootstrap intervals \cite{efron1993} with 1,000 replicates: each replicate resamples the legitimate and phishing test URLs of every seed with replacement and averages the metric over seeds, so the intervals reflect test-set sampling; seed variation is reported as a standard deviation. Models are compared on the same replicates (paired bootstrap), with two-sided p-values and Holm correction \cite{holm1979} over all eight comparisons.
 
-\emph{Latency and memory.} Each fitted seed-42 D2 model is loaded in a fresh process limited to one CPU thread. We time the end-to-end path from raw URL string to probability (feature extraction or character encoding included) for 1,000 test URLs, one at a time, after 50 warm-up calls, and report the median and 95th percentile. We also report the time per URL when the same 1,000 URLs are classified in one batch, the size of the serialized model file, and the increase of the process's peak resident memory over its value after loading the libraries. D1 latency is not reported because its features require network look-ups that dominate the cost.
+\emph{Latency.} Each seed-42 D2 model is loaded in a fresh process limited to one CPU thread; we time the path from raw URL string to probability (feature extraction or encoding included) for 1,000 test URLs, one at a time, after 50 warm-up calls. We also report batched time per URL, model file size and the increase of peak resident memory.
 
 \subsection{Hardware and software}
 
-All experiments ran on one virtual machine: Intel Xeon processor at 2.80~GHz (2 logical CPUs), 7.8~GB RAM, no GPU, Linux kernel 6.18, Python 3.13.16, NumPy 2.5.3, pandas 3.0.5, scikit-learn 1.9.1, XGBoost 3.4.1 and PyTorch 2.14.1 (CPU execution). Training used two threads. For seed 42 another experiment shared the CPU, so training times are averaged over seeds 43 and 44 only.
+The experiments behind protocols A and B and Tables~\ref{tab:urls}, \ref{tab:imbalance}, \ref{tab:latency} and \ref{tab:cascade} ran on a virtual machine with an Intel Xeon processor at 2.80~GHz (2 logical CPUs), 7.8~GB RAM, no GPU, Python 3.13.16, scikit-learn 1.9.1, XGBoost 3.4.1 and PyTorch 2.14.1. The added experiments (protocols C and D, Tables~\ref{tab:general} and~\ref{tab:threshold}) ran on a machine of the same size with a 2.10~GHz Xeon, Python 3.13.18 and PyTorch 2.15.0; the random-split CNN results of both runs agree (F1 96.84\%). Training used two threads.
 
 \subsection{Reproducibility}\label{sec:repro}
 
-The repository [\emph{URL to be added}] contains the code of every experiment, a script that downloads the datasets from pinned commits and checks their SHA-256 sums, the per-fold and per-seed results, the test-set predictions of every model and the script that generates every table of this paper from those files. A single command re-runs all experiments.
+The repository \url{https://github.com/TussupovAM/Phish-bench} contains the code of every experiment, scripts that download all datasets from pinned versions and check their SHA-256 sums, per-fold and per-seed results, the validation and test scores of every model, and the script that generates every table of this paper from those files.
 
 % ============================================================================
 \section{Results}\label{sec:results}
 
-\subsection{Duplicates inflate accuracy on the UCI dataset}
+\subsection{UCI: duplicates and conflicting labels}
 
-Table~\ref{tab:uci} shows that under Protocol~A our results reproduce those of \cite{shahrivari2020} closely: Random Forest reaches 97.25\% (97.27\% in \cite{shahrivari2020}). XGBoost reaches 97.11\% (98.32\% in \cite{shahrivari2020}, where it was tuned), and the 1D-CNN 96.13\% (97.3\% in \cite{yerima2020}).
+Under protocol A our results reproduce \cite{shahrivari2020}: Random Forest reaches 97.25\% (97.27\% in \cite{shahrivari2020}), XGBoost 97.11\% (98.32\% after tuning in \cite{shahrivari2020}) and the 1D-CNN 96.13\% (97.3\% in \cite{yerima2020}). Under A, 68.6\% of test rows have their exact feature vector in the training folds.
 
-Removing duplicates (Protocol~B) lowers the accuracy of every model. Models that memorise individual examples lose most: the decision tree loses 3.78~pp, Random Forest 2.40~pp and KNN 2.17~pp. Under Protocol~B XGBoost is the most accurate model (95.50\%), and the 1D-CNN (94.31\%) does not outperform the tree ensembles. With 47\% duplicated rows, part of the accuracy reported on this dataset reflects examples seen during training.
+Grouping folds by feature vector (C) lowers accuracy for every model (Table~\ref{tab:uci}), most for those that memorise examples: decision tree $-$3.66~pp, KNN $-$3.05~pp, Random Forest $-$1.81~pp. Protocol B removes most of this leakage, but not all: in B, 1.95\% of test rows still have their vector in training, always with the opposite label, because rows with conflicting labels are not duplicates. C and B differ by at most 0.9~pp, so duplicates, not conflicts, cause most of the inflation. The conflicting rows set a ceiling: no classifier can be right on more than 68.1\% of them, and the models reach 50.7--57.1\%. Without them (D), accuracy rises by 1.0--2.1~pp. Under every protocol XGBoost is the most accurate model and the 1D-CNN does not beat the tree ensembles.
 
 \input{tables/uci.tex}
 
-\subsection{Raw URLs: character-level DL outperforms lexical-feature ML}
+\subsection{Raw URLs, random split}
 
-On D2 the ranking reverses (Table~\ref{tab:urls}). All three character-level models outperform all seven ML models. CNN (char) reaches an F1 of 96.84\% with an FPR of 2.40\%, against 92.45\% and 6.05\% for the best ML model (Random Forest), so the CNN produces 2.5 times fewer false alarms. The variation across seeds is small (standard deviation of F1 at most 0.89~pp, and at most 0.43~pp for the DL models). The hybrid CNN+LSTM does not improve on the plain CNN.
-
-The advantage comes from the input representation, not from depth alone. With 20 hand-crafted lexical features the ML models lose information that the character models learn directly. On D1, where both families see the same 30 features, DL has no advantage.
+On the random split of D2 (Table~\ref{tab:urls}) all three character-level DL models outperform all seven classical models on lexical features: CNN (char) reaches an F1 of 96.84\% and an FPR of 2.40\%, against 92.45\% and 6.05\% for Random Forest. The hybrid CNN+LSTM does not improve on the CNN.
 
 \input{tables/urls.tex}
 
-\subsection{Precision collapses at realistic prevalence}
+\subsection{Model family versus input representation}
 
-Table~\ref{tab:imbalance} and Fig.~\ref{fig:prevalence} evaluate the same trained models at decreasing phishing prevalence. Recall and FPR do not depend on prevalence and stay constant, but precision falls sharply. At 1\% phishing, precision is 13.34\% for Random Forest and 13.22\% for XGBoost: about seven of every eight alerts are false. For CNN (char) it is 29.66\%. Accuracy stays near 94\% for the ML models and 97.6\% for the CNN, below the 99\% that a trivial ``always legitimate'' rule would score; accuracy is therefore not a meaningful metric at this prevalence. MCC and PR-AUC separate the models better: at 1\% phishing, PR-AUC is 0.58 for Random Forest and 0.90 for the CNN.
+Table~\ref{tab:general} separates the two factors. With the same input, DL does not win: on the 20 lexical features the MLP reaches an F1 of 91.51\% against 92.29\% for XGBoost (random split) and 90.24\% against 90.99\% (domain split); on characters the classical TF-IDF n-gram model beats the CNN, 98.20\% against 96.84\% and 96.50\% against 95.02\%. The paired differences are significant (CNN minus n-gram model: $-$1.48~pp, 95\% CI $-$1.71 to $-$1.24 on the domain split; Holm-adjusted $p\le0.008$ for all eight comparisons). Changing the input from lexical features to characters, in contrast, adds 4.8--5.9~pp to the best model of each family. The advantage reported for character-level DL in the previous subsection is therefore an advantage of the representation, which a linear model on character n-grams exploits at least as well.
 
-Across all ten models and four prevalence levels, Eq.~\eqref{eq:precision} predicts the measured precision within 0.12~pp. Precision at a target prevalence can therefore be estimated from TPR and FPR measured on a balanced test set, without collecting an imbalanced one. Because precision at low prevalence is governed by FPR, the 2.5-fold lower FPR of the CNN translates into more than twice the precision of the ML models.
+\input{tables/general.tex}
+
+\subsection{Domain-disjoint split and independent sources}
+
+When no registered domain is shared between training and test data, F1 falls by 1.27--2.19~pp for every model except the weakest (logistic regression on lexical features), and the FPR of the best model rises from 1.19\% to 1.54\% (Table~\ref{tab:general}). The ranking within the domain split is the same as within the random split.
+
+The independent sources show a larger shift. At the default threshold, recall on PhiUSIIL phishing is 25.3--80.5\% and on Phishing.Database 52.2--78.3\%, against 82.5--95.0\% on the domain-disjoint Ebbu2017 test set. On PhiUSIIL's legitimate home pages the FPR ranges from 0.3\% (MLP) to 97.9\% (XGBoost), and that of Random Forest varies between 11.5\% and 55.6\% across seeds. The cause is the form of the URLs: only 4.7\% of legitimate and 2.0\% of phishing Ebbu2017 URLs are bare host names, against 100\% and 72.8\% in PhiUSIIL, so the models meet inputs that hardly occur in training. Threshold-free ROC-AUC on PhiUSIIL is 0.84 for the MLP, 0.76 for the n-gram model, 0.71 for the CNN and 0.46 for XGBoost, i.e., the ranking changes and no family dominates. A model trained on one 2017 corpus, however it is split, does not show how it will perform on another source.
+
+\subsection{Precision at realistic prevalence}
+
+Table~\ref{tab:imbalance} and Fig.~\ref{fig:prevalence} evaluate the random-split models of Table~\ref{tab:urls} at decreasing prevalence with the 0.5 threshold. Recall and FPR do not change, but at 1\% phishing precision is 13.34\% for Random Forest, 13.22\% for XGBoost and 29.66\% for CNN (char); accuracy stays near 94--98\%, below the 99\% of the trivial ``always legitimate'' rule. Across ten models and four levels, Eq.~\eqref{eq:precision} predicts the measured precision within 0.12~pp, so precision at a target prevalence can be estimated from TPR and FPR measured on a balanced test set.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig_precision_prevalence.pdf}
-\caption{Precision versus phishing share of the test set. Markers: measured (mean over 50 draws and three seeds); lines: Eq.~\eqref{eq:precision} with each model's TPR and FPR on the full test set.}
+\caption{Precision versus phishing share of the test set (random split, threshold 0.5). Markers: measured (mean over 50 draws and three seeds); lines: Eq.~\eqref{eq:precision} with each model's TPR and FPR on the full test set.}
 \label{fig:prevalence}
 \end{figure}
 
 \input{tables/imbalance.tex}
 
+\subsection{Calibration and thresholds for the target prevalence}
+
+The 0.5 threshold is the wrong operating point for a model trained on near-balanced data and deployed at 1\% prevalence. Table~\ref{tab:threshold} keeps the domain-disjoint split and changes only the threshold, chosen on validation data. With $t_{F1}$, F1 at 1\% prevalence rises from 54.6\% to 82.7\% (95\% CI 78.3--86.5\%) for the n-gram model, from 40.8\% to 75.6\% for the CNN and from 20.5\% to 55.6\% for XGBoost; false alarms per 10,000 legitimate URLs drop from 154 to 16 for the n-gram model and from 267 to 20 for the CNN, at the cost of recall (81.5\% and 72.7\%). The CNN's gain over XGBoost (+20.5~pp, CI 14.2--27.1) and its deficit to the n-gram model ($-$6.9~pp, CI $-$11.1 to $-$2.8) at this operating point are both significant. $t_{FPR}$ keeps the test FPR near its 0.5\% validation target (0.31--0.55\%) and gives 62.3\% precision at 89.7\% recall for the n-gram model.
+
+Platt scaling lowers the ECE of the character models (0.015$\to$0.006 and 0.018$\to$0.008) and of Random Forest, and leaves the already well-calibrated XGBoost, MLP and logistic regression about unchanged. Calibration on validation data assumes that validation and deployment data are alike; on the independent sources of the previous subsection this assumption fails, as \cite{glazyrina2026} also observed under temporal shift.
+
+\input{tables/threshold.tex}
+
 \subsection{Latency, model size and memory}
 
-Table~\ref{tab:latency} shows that on one CPU thread XGBoost classifies a URL in a median 0.48~ms and CNN (char) in 0.50~ms, feature extraction and encoding included. The recurrent models are slower but still under 1~ms (median) and under 1.7~ms (95th percentile). The slowest models are the scikit-learn ensembles: Random Forest (23.6~ms) and AdaBoost (31.2~ms) pay a fixed per-call cost for evaluating hundreds of estimators on a single sample. When URLs are classified in batches, every model needs less than 1~ms per URL.
-
-The character models are small: 0.11--0.18~MB on disk, against 191.9~MB for the 300-tree Random Forest. Their peak memory increase of 125--155~MB is dominated by the PyTorch runtime rather than by the weights.
-
-As an illustration, 10,000 employees receiving 50 e-mails a day with one URL each produce 500,000 URLs a day. At 0.50~ms per URL the CNN needs about 250~s of CPU time a day for this load.
+On one CPU thread XGBoost classifies a URL in a median 0.48~ms and CNN (char) in 0.50~ms, feature extraction and encoding included (Table~\ref{tab:latency}). The recurrent models stay under 1~ms (median); Random Forest (23.6~ms) and AdaBoost (31.2~ms) pay a per-call cost for evaluating hundreds of estimators. The character models take 0.11--0.18~MB on disk, against 191.9~MB for the Random Forest. The TF-IDF n-gram model was measured later on the second machine, together with XGBoost and the CNN as references: median 0.68~ms (95th percentile 1.09~ms) against 0.23~ms and 0.19~ms, with a 4.9~MB file and an 88~MB memory increase. It is thus the most accurate model but about three times slower than the CNN per single URL, still around one millisecond.
 
 \input{tables/latency.tex}
 
 \subsection{A two-tier cascade}
 
-The cascade in Table~\ref{tab:cascade} sends a URL to CNN (char) only when the XGBoost probability is uncertain ($|p-0.5|<\delta$). Escalating 8.5\% of URLs ($\delta=0.2$) raises F1 from 92.28\% to 95.10\%; escalating 24.4\% ($\delta=0.4$) gives 96.57\%, close to the CNN alone (96.84\%). Here the cascade brings no saving, because the CNN is about as fast as XGBoost. A fast--slow design pays off only when the second tier is much more expensive than the first, as with the page crawling and reference-based analysis of PhishIntel \cite{li2024}, which take seconds. In that case the mean cost per URL is $t_1 + r\,t_2$, where $r$ is the escalation rate measured here.
+The cascade in Table~\ref{tab:cascade} sends a URL to CNN (char) only when the XGBoost probability is uncertain ($|p-0.5|<\delta$). Escalating 24.4\% of URLs ($\delta=0.4$) gives an F1 of 96.57\%, close to the CNN alone (96.84\%). Because the CNN is about as fast as XGBoost, the cascade saves nothing here; it pays off only when the second tier is much more expensive, as with page crawling in PhishIntel \cite{li2024}.
 
 \input{tables/cascade.tex}
 
 % ============================================================================
 \section{Discussion}\label{sec:discussion}
 
-\subsection{Challenges revisited}
+\subsection{Findings}
 
-\emph{Class imbalance} is the most serious practical problem we measured. A detector with 97\% accuracy on a balanced test set produces mostly false alarms at 1\% prevalence. Studies should report precision, FPR and PR-AUC at a stated prevalence, or report TPR and FPR so that Eq.~\eqref{eq:precision} can be applied. Deployments should choose the decision threshold for the expected prevalence and an acceptable alert rate.
+\emph{Evaluation protocol.} Duplicates in UCI and shared domains in Ebbu2017 both make random splits optimistic, by up to 3.66~pp on UCI and by 1.3--2.2~pp on Ebbu2017. A much larger drop appears on independent sources, where URL form and collection differ. Within-corpus splits, even domain-disjoint ones, therefore give an upper bound; claims about new attacks need data from other sources or later periods.
 
-\emph{Feature engineering versus end-to-end learning.} On a fixed set of engineered features (D1), DL did not beat gradient-boosted trees. On raw URL strings (D2), character models clearly beat 20 lexical features. The choice depends on the input, not on a general superiority of either family.
+\emph{ML versus DL.} Once inputs are equal, DL did not beat classical models in any of our comparisons: tree ensembles matched or beat the 1D-CNN and the MLP on engineered features, and a linear model on character n-grams beat the character CNN. The choice of representation matters more than the choice of family.
 
-\emph{The latency--accuracy trade-off} was not observed at the model sizes used here: the most accurate model was also among the fastest. Latency matters mainly for models that need network access (WHOIS, page crawling) or that are large (LLMs).
+\emph{Operating point.} At realistic prevalence, choosing the threshold for the expected prevalence on validation data improved F1 by 28--35~pp for the three best models, more than any change of model. Studies should report TPR and FPR, so that Eq.~\eqref{eq:precision} can be applied, and thresholds chosen without test data.
 
-\emph{Endpoint cost.} Character-level models under 0.2~MB that classify a URL in under a millisecond on one CPU thread are suitable for laptops of remote workers.
-
-\emph{Privacy.} URL-only models run locally and do not need the e-mail body to leave the device. We did not evaluate privacy-preserving training.
+\emph{Endpoint cost.} The best models classify a URL in about a millisecond on one CPU thread and fit in a few megabytes, which suits laptops of remote workers; URL-only models also avoid sending message bodies off the device.
 
 \subsection{Limitations}
 
-All experiments ran on one 2-vCPU virtual machine; absolute latencies will differ on other hardware, but the ranking is likely to hold. Ebbu2017 dates from 2017. Despite removing the scheme, other collection artefacts may remain: for example, 58.8\% of legitimate but 26.2\% of phishing URLs start with \texttt{www.}. We evaluate URLs only, not e-mail bodies or attachments, and we did not tune hyper-parameters, so absolute scores are below tuned results in the literature. Imbalanced test sets were built by subsampling phishing URLs, which assumes the legitimate test URLs are representative of real traffic. Three seeds give a limited estimate of variance.
+Ebbu2017 has no collection dates, so a temporal split within it was not possible; the independent sources are later than Ebbu2017 but differ from it in several ways at once (time, source, URL form), and we cannot separate these effects. PhiUSIIL offers only home pages as legitimate URLs and Phishing.Database only phishing, so we report TPR and FPR separately rather than precision. Grouping by registered domain does not remove shared hosting, URL shorteners or campaign templates spread over many domains. Hyper-parameters were fixed except $C$ of the n-gram model; tuned DL models might narrow the gap. Three seeds give a limited estimate of training variance, and bootstrap intervals cover test sampling only. Latency was measured on 2-vCPU virtual machines; absolute values will differ on other hardware.
 
 \subsection{Future directions}
 
 \begin{enumerate}
-\item \textbf{Prevalence-aware evaluation and thresholds}: calibrate scores and select thresholds for a target alert budget at realistic prevalence.
-\item \textbf{E-mail and multi-channel data}: repeat the comparison on e-mail corpora such as MeAJOR \cite{mendes2025} and on chat and collaboration messages used in remote work.
-\item \textbf{Federated learning} \cite{mcmahan2017}: train across organizations without sharing e-mails, including the non-IID case where different organizations face different campaigns.
-\item \textbf{Explainability}: attribution methods such as SHAP \cite{lundberg2017} to show users why a URL was flagged; their effect on user behaviour needs to be measured.
-\item \textbf{Robustness over time}: train on older and test on newer phishing campaigns to measure drift.
+\item \textbf{Temporal evaluation} on dated corpora or continuously collected feeds, with thresholds re-estimated over time \cite{glazyrina2026}.
+\item \textbf{Combined representations}: character n-grams together with host-based and lexical features, compared under domain-disjoint splits.
+\item \textbf{E-mail and multi-channel data}, e.g., MeAJOR \cite{mendes2025}, and chat messages.
+\item \textbf{Federated learning} \cite{mcmahan2017} across organizations facing different campaigns.
+\item \textbf{Explainability} with attribution methods such as SHAP \cite{lundberg2017}.
 \end{enumerate}
 
 % ============================================================================
 \section{Conclusion}\label{sec:conclusion}
 
-Under one protocol on two public datasets, we found that: duplicate rows inflate accuracy on the widely used UCI dataset by up to 3.78~pp; DL does not beat gradient-boosted trees on engineered features but outperforms lexical-feature ML on raw URLs (F1 96.84\% versus 92.45\%); at 1\% phishing prevalence precision drops to 13--30\% even for the best models, as predicted by a simple closed-form expression; and small character-level models classify a URL in under 1~ms on one CPU thread. Reporting prevalence-aware metrics and measured latency would make future comparisons of phishing detectors more useful for deployment.
+Under one protocol on two public datasets and two independent sources, we found that duplicates inflate UCI accuracy by up to 3.66~pp; that the advantage of character-level DL on raw URLs is an advantage of the input, since TF-IDF character n-grams with logistic regression are more accurate than the CNN (F1 96.50\% vs.\ 95.02\% on a domain-disjoint split); that domain-disjoint splits lower F1 by 1.3--2.2~pp while independent sources lower recall far more and change the ranking of models; and that at 1\% prevalence a threshold chosen on validation data for that prevalence matters more than the model, raising F1 from 54.6\% to 82.7\% for the best model. Phishing URL detectors should be compared on equal inputs, with domain-disjoint and external test data, at a stated prevalence and with thresholds fixed without test data.
 
-\section*{Acknowledgment}
-The author thanks the supervisor for feedback on an earlier draft. % Add a disclosure of AI assistance here if required by the venue or university policy.
-
-\begin{thebibliography}{12}
+\begin{thebibliography}{20}
 
 \bibitem{barracuda2020}
 Barracuda Networks, ``Threat Spotlight: Coronavirus-related phishing,'' Barracuda Blog, Mar. 26, 2020. [Online]. Available: \url{https://blog.barracuda.com/2020/03/26/threat-spotlight-coronavirus-related-phishing}
 
 \bibitem{sharma2023}
 K.~R. Sharma, W.-Y. Chiu, and W.~Meng, ``Security analysis on social media networks via STRIDE model,'' arXiv:2303.13075, 2023.
+
+\bibitem{kapoor2023}
+S.~Kapoor and A.~Narayanan, ``Leakage and the reproducibility crisis in machine-learning-based science,'' \emph{Patterns}, vol.~4, no.~9, Art. no. 100804, 2023, doi: 10.1016/j.patter.2023.100804.
+
+\bibitem{glazyrina2026}
+N.~Glazyrina \emph{et~al.}, ``Robust phishing URL detection under cross-dataset and temporal shifts using tail-aware residual adaptation,'' \emph{Technologies}, vol.~14, no.~11, Art. no. 766, 2026, doi: 10.3390/technologies14110766.
 
 \bibitem{ho2019}
 G.~Ho, A.~Cidon, L.~Gavish, M.~Schweighauser, V.~Paxson, S.~Savage, G.~M. Voelker, and D.~Wagner, ``Detecting and characterizing lateral phishing at scale,'' arXiv:1910.00790, 2019.
@@ -233,6 +247,21 @@ P.~Mendes, E.~Maia, and I.~Pra\c{c}a, ``MeAJOR Corpus: A multi-source dataset fo
 
 \bibitem{li2024}
 Y.~Li \emph{et~al.}, ``PhishIntel: Toward practical deployment of reference-based phishing detection,'' in \emph{Companion Proc. ACM Web Conf. (WWW Companion '25)}, 2025, doi: 10.1145/3701716.3715192.
+
+\bibitem{prasad2024}
+A.~Prasad and S.~Chandra, ``PhiUSIIL: A diverse security profile empowered phishing URL detection framework based on similarity index and incremental learning,'' \emph{Computers \& Security}, vol.~136, Art. no. 103545, 2024, doi: 10.1016/j.cose.2023.103545.
+
+\bibitem{phishdb2026}
+Phishing.Database project, ``Phishing.Database,'' GitHub repository, commit 12a20bf, Oct. 2, 2026. [Online]. Available: \url{https://github.com/Phishing-Database/Phishing.Database}
+
+\bibitem{platt1999}
+J.~Platt, ``Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods,'' in \emph{Advances in Large Margin Classifiers}. Cambridge, MA, USA: MIT Press, 1999, pp.~61--74.
+
+\bibitem{efron1993}
+B.~Efron and R.~J. Tibshirani, \emph{An Introduction to the Bootstrap}. New York, NY, USA: Chapman \& Hall, 1993.
+
+\bibitem{holm1979}
+S.~Holm, ``A simple sequentially rejective multiple test procedure,'' \emph{Scandinavian Journal of Statistics}, vol.~6, no.~2, pp.~65--70, 1979.
 
 \bibitem{mcmahan2017}
 B.~McMahan, E.~Moore, D.~Ramage, S.~Hampson, and B.~A. y~Arcas, ``Communication-efficient learning of deep networks from decentralized data,'' in \emph{Proc. AISTATS}, 2017, pp.~1273--1282.

@@ -1,8 +1,8 @@
-"""Experiment 2b — 1D-CNN of Yerima & Alzaylaee [7] on the UCI dataset.
+"""Experiment 2b — 1D-CNN of Yerima & Alzaylaee (2020) on the UCI dataset.
 
 Same 10 folds and both protocols (A: all rows, B: deduplicated) as experiment 1,
 so the CNN is directly comparable to the seven ML models.
-Within each training fold 10% is held out for early stopping, as in [7]
+Within each training fold 10% is held out for early stopping, as in Yerima & Alzaylaee
 (max 200 epochs, patience 20, Adam lr 1e-3, batch 64).
 
 Outputs: results/exp2b_uci_cnn_folds.csv, results/exp2b_uci_cnn_summary.csv

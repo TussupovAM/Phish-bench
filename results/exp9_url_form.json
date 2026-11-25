@@ -1,0 +1,10 @@
+{
+  "ebbu_bare_share_legit": 0.04704426909188177,
+  "ebbu_bare_share_phish": 0.020464288603089863,
+  "phiusiil_bare_share_legit": 1.0,
+  "phiusiil_bare_share_phish": 0.7284,
+  "phishdb_bare_share": 0.23805,
+  "ebbu_www_share_legit": 0.5881035174535242,
+  "ebbu_www_share_phish": 0.2620723125454987,
+  "phiusiil_www_share_legit": 1.0
+}

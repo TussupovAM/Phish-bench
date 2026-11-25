@@ -1,0 +1,57 @@
+D2: 54634 URLs, 21649 registered domains
+== random seed 42: fit=39336 val=4371 test=10927 test phishing=0.453
+  Logistic Regression        F1=0.8392 FPR=0.1130 AUC=0.9298 | PhiUSIIL TPR=0.256 FPR=0.007 PhishDB TPR=0.525 | 0s
+  Random Forest              F1=0.9228 FPR=0.0639 AUC=0.9788 | PhiUSIIL TPR=0.581 FPR=0.382 PhishDB TPR=0.766 | 12s
+  XGBoost                    F1=0.9189 FPR=0.0647 AUC=0.9796 | PhiUSIIL TPR=0.789 FPR=0.991 PhishDB TPR=0.773 | 29s
+  TF-IDF char n-grams + LR   F1=0.9816 FPR=0.0129 AUC=0.9984 | PhiUSIIL TPR=0.415 FPR=0.061 PhishDB TPR=0.720 | 19s
+  MLP                        F1=0.9138 FPR=0.0627 AUC=0.9776 | PhiUSIIL TPR=0.579 FPR=0.178 PhishDB TPR=0.772 | 562s
+  CNN (char)                 F1=0.9675 FPR=0.0247 AUC=0.9959 | PhiUSIIL TPR=0.432 FPR=0.087 PhishDB TPR=0.626 | 97s
+== random seed 43: fit=39336 val=4371 test=10927 test phishing=0.453
+  Logistic Regression        F1=0.8346 FPR=0.1150 AUC=0.9307 | PhiUSIIL TPR=0.254 FPR=0.007 PhishDB TPR=0.522 | 0s
+  Random Forest              F1=0.9229 FPR=0.0603 AUC=0.9790 | PhiUSIIL TPR=0.636 FPR=0.516 PhishDB TPR=0.774 | 6s
+  XGBoost                    F1=0.9234 FPR=0.0565 AUC=0.9804 | PhiUSIIL TPR=0.796 FPR=1.000 PhishDB TPR=0.784 | 1s
+  TF-IDF char n-grams + LR   F1=0.9831 FPR=0.0099 AUC=0.9987 | PhiUSIIL TPR=0.444 FPR=0.063 PhishDB TPR=0.734 | 19s
+  MLP                        F1=0.9154 FPR=0.0692 AUC=0.9756 | PhiUSIIL TPR=0.481 FPR=0.048 PhishDB TPR=0.689 | 9s
+  CNN (char)                 F1=0.9689 FPR=0.0165 AUC=0.9961 | PhiUSIIL TPR=0.376 FPR=0.061 PhishDB TPR=0.577 | 81s
+== random seed 44: fit=39336 val=4371 test=10927 test phishing=0.453
+  Logistic Regression        F1=0.8474 FPR=0.1140 AUC=0.9334 | PhiUSIIL TPR=0.255 FPR=0.007 PhishDB TPR=0.523 | 0s
+  Random Forest              F1=0.9254 FPR=0.0598 AUC=0.9804 | PhiUSIIL TPR=0.670 FPR=0.700 PhishDB TPR=0.773 | 7s
+  XGBoost                    F1=0.9265 FPR=0.0608 AUC=0.9806 | PhiUSIIL TPR=0.802 FPR=0.999 PhishDB TPR=0.786 | 1s
+  TF-IDF char n-grams + LR   F1=0.9813 FPR=0.0129 AUC=0.9985 | PhiUSIIL TPR=0.433 FPR=0.066 PhishDB TPR=0.721 | 20s
+  MLP                        F1=0.9160 FPR=0.0710 AUC=0.9771 | PhiUSIIL TPR=0.538 FPR=0.137 PhishDB TPR=0.748 | 14s
+  CNN (char)                 F1=0.9689 FPR=0.0306 AUC=0.9962 | PhiUSIIL TPR=0.503 FPR=0.174 PhishDB TPR=0.650 | 106s
+== domain seed 42: fit=39335 val=4371 test=10928 test phishing=0.453
+  Logistic Regression        F1=0.8394 FPR=0.1100 AUC=0.9260 | PhiUSIIL TPR=0.250 FPR=0.007 PhishDB TPR=0.520 | 0s
+  Random Forest              F1=0.8947 FPR=0.0843 AUC=0.9627 | PhiUSIIL TPR=0.505 FPR=0.115 PhishDB TPR=0.761 | 6s
+  XGBoost                    F1=0.9068 FPR=0.0777 AUC=0.9699 | PhiUSIIL TPR=0.802 FPR=0.971 PhishDB TPR=0.785 | 1s
+  TF-IDF char n-grams + LR   F1=0.9625 FPR=0.0144 AUC=0.9953 | PhiUSIIL TPR=0.435 FPR=0.058 PhishDB TPR=0.717 | 18s
+  MLP                        F1=0.8990 FPR=0.0699 AUC=0.9692 | PhiUSIIL TPR=0.443 FPR=0.006 PhishDB TPR=0.645 | 7s
+  CNN (char)                 F1=0.9476 FPR=0.0279 AUC=0.9914 | PhiUSIIL TPR=0.399 FPR=0.067 PhishDB TPR=0.613 | 104s
+== domain seed 43: fit=39335 val=4371 test=10928 test phishing=0.453
+  Logistic Regression        F1=0.8596 FPR=0.0891 AUC=0.9340 | PhiUSIIL TPR=0.249 FPR=0.006 PhishDB TPR=0.519 | 0s
+  Random Forest              F1=0.9109 FPR=0.0709 AUC=0.9717 | PhiUSIIL TPR=0.617 FPR=0.556 PhishDB TPR=0.769 | 7s
+  XGBoost                    F1=0.9168 FPR=0.0642 AUC=0.9765 | PhiUSIIL TPR=0.805 FPR=1.000 PhishDB TPR=0.776 | 1s
+  TF-IDF char n-grams + LR   F1=0.9658 FPR=0.0167 AUC=0.9961 | PhiUSIIL TPR=0.430 FPR=0.067 PhishDB TPR=0.722 | 18s
+  MLP                        F1=0.9073 FPR=0.0537 AUC=0.9720 | PhiUSIIL TPR=0.300 FPR=0.001 PhishDB TPR=0.559 | 3s
+  CNN (char)                 F1=0.9456 FPR=0.0288 AUC=0.9911 | PhiUSIIL TPR=0.351 FPR=0.025 PhishDB TPR=0.579 | 53s
+== domain seed 44: fit=39335 val=4371 test=10928 test phishing=0.453
+  Logistic Regression        F1=0.8458 FPR=0.0993 AUC=0.9329 | PhiUSIIL TPR=0.258 FPR=0.006 PhishDB TPR=0.526 | 0s
+  Random Forest              F1=0.8997 FPR=0.0762 AUC=0.9682 | PhiUSIIL TPR=0.586 FPR=0.445 PhishDB TPR=0.779 | 7s
+  XGBoost                    F1=0.9063 FPR=0.0669 AUC=0.9742 | PhiUSIIL TPR=0.806 FPR=0.967 PhishDB TPR=0.787 | 1s
+  TF-IDF char n-grams + LR   F1=0.9669 FPR=0.0150 AUC=0.9966 | PhiUSIIL TPR=0.432 FPR=0.067 PhishDB TPR=0.724 | 18s
+  MLP                        F1=0.9010 FPR=0.0575 AUC=0.9718 | PhiUSIIL TPR=0.342 FPR=0.002 PhishDB TPR=0.591 | 4s
+  CNN (char)                 F1=0.9575 FPR=0.0236 AUC=0.9942 | PhiUSIIL TPR=0.469 FPR=0.137 PhishDB TPR=0.618 | 103s
+                                                   accuracy_mean  precision_mean  recall_mean  f1_mean  fpr_mean  mcc_mean  roc_auc_mean  pr_auc_mean  train_s_mean
+split  family input      model                                                                                                                                     
+random ML     lexical    Logistic Regression              0.8583          0.8567       0.8247   0.8404    0.1140    0.7135        0.9313       0.9252        0.0670
+                         Random Forest                    0.9311          0.9255       0.9219   0.9237    0.0614    0.8608        0.9794       0.9754        8.1308
+                         XGBoost                          0.9305          0.9261       0.9198   0.9229    0.0607    0.8596        0.9802       0.9773       10.1552
+              characters TF-IDF char n-grams + LR         0.9838          0.9855       0.9786   0.9820    0.0119    0.9673        0.9985       0.9984       18.9229
+       DL     lexical    MLP                              0.9234          0.9177       0.9125   0.9151    0.0676    0.8453        0.9768       0.9736      195.1374
+              characters CNN (char)                       0.9715          0.9710       0.9660   0.9684    0.0240    0.9426        0.9961       0.9957       94.6089
+domain ML     lexical    Logistic Regression              0.8664          0.8728       0.8251   0.8483    0.0995    0.7300        0.9310       0.9263        0.0798
+                         Random Forest                    0.9115          0.9059       0.8977   0.9018    0.0771    0.8212        0.9675       0.9608        6.7410
+                         XGBoost                          0.9189          0.9150       0.9050   0.9099    0.0696    0.8363        0.9735       0.9701        0.7112
+              characters TF-IDF char n-grams + LR         0.9689          0.9808       0.9498   0.9650    0.0154    0.9374        0.9960       0.9955       18.0517
+       DL     lexical    MLP                              0.9136          0.9237       0.8822   0.9024    0.0603    0.8258        0.9710       0.9676        4.6036
+              characters CNN (char)                       0.9557          0.9665       0.9345   0.9502    0.0267    0.9108        0.9922       0.9912       86.5267

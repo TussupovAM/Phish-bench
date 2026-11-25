@@ -4,3 +4,4 @@ email_study/results/emails.pkl
 email_study/results/e2_models/
 __pycache__/
 practice_report/*.docx
+_ext/
